@@ -2,10 +2,8 @@ package br.nom.figueiredo.sergio.cogito.service;
 
 import br.nom.figueiredo.sergio.cogito.model.Cota;
 import br.nom.figueiredo.sergio.cogito.repository.CotaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Scheduler;
 
 @Service
 public class CotaServiceImpl implements CotaService {

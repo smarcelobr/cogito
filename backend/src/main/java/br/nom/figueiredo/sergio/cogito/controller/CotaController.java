@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 @RestController
-@RequestMapping("/cotas")
+@RequestMapping("/api/cotas")
 public class CotaController {
 
     private final CotaService cotaService;

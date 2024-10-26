@@ -6,6 +6,8 @@ Responda corretamente às questões para ganhar cotas de acesso à internet.
 
     > cd frontend
     frontend> ng build
+    frontend> cd ..
+    > .\gradlew clean 
 
 ## DATABASE - MariaDB
 
