@@ -1,0 +1,19 @@
+GET /api/pergunta?id=101
+Host: localhost:8080
+Accept: image/png
+
+> teste.png
+
+###
+POST /api/latex HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+  "latex": "\\begin{array}{l}\\begin{array}{rl} s &= \\int_a^b\\left\\|\\frac{d}{dt}\\vec{r}\\,(u(t),v(t))\\right\\|\\,dt \\\\ &= \\int_a^b \\sqrt{u'(t)^2\\,\\vec{r}_u\\cdot\\vec{r}_u + 2u'(t)v'(t)\\, \\vec{r}_u\\cdot\\vec{r}_v+ v'(t)^2\\,\\vec{r}_v\\cdot\\vec{r}_v}\\,\\,\\, dt. \\end{array}\\\\\\end{array}"
+}
+
+###
+OPTIONS /api/latex HTTP/1.1
+Host: localhost:8080
+Origin: http://localhost:4200

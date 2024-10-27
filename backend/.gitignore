@@ -39,4 +39,4 @@ out/
 ###
 .idea/
 env-*.txt
-
+extra-properties.gradle

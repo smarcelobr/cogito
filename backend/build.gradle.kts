@@ -1,9 +1,11 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
+
 plugins {
 	java
 	id("org.springframework.boot")
 	id("io.spring.dependency-management")
+	id("org.flywaydb.flyway") version "10.20.1"
 }
 
 group = "br.nom.figueiredo.sergio"
@@ -19,19 +21,28 @@ repositories {
 	mavenCentral()
 }
 
+buildscript {
+	apply(from="extra-properties.gradle")
+	dependencies {
+		// dependencia do plugin flyway
+		classpath("org.flywaydb:flyway-mysql:10.20.1")
+	}
+}
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-	implementation("org.mariadb:r2dbc-mariadb:1.1.3")
-	runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.mariadb:r2dbc-mariadb:1.1.3")
 	implementation("org.flywaydb:flyway-mysql")
+	runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+	implementation("org.scilab.forge:jlatexmath:1.0.7")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-	implementation("org.scilab.forge:jlatexmath:1.0.7")
-
+	testImplementation("org.springframework.security:spring-security-test")
 }
 
 tasks.withType<Test> {
@@ -67,4 +78,12 @@ tasks.getByName<Jar>("jar") {
 
 tasks.getByName<BootJar>("bootJar") {
 	archiveBaseName = "cogito"
+}
+
+flyway {
+	url = project.extra["FLYWAY_URL"] as String
+	user = project.extra["FLYWAY_USER"] as String
+	password = project.extra["FLYWAY_PASSWORD"] as String
+	connectRetries = 10
+	encoding = "UTF-8"
 }

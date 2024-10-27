@@ -1,0 +1,10 @@
+<mat-grid-list cols="2" rowHeight="40em">
+  <mat-grid-tile>
+    <mat-form-field>
+      <mat-label>Autosize textarea</mat-label>
+      <textarea matInput [formControl]="latex" rows="24" cols="76"></textarea>
+    </mat-form-field>
+    <button mat-flat-button (click)="enviar()">Enviar</button>
+  </mat-grid-tile>
+  <mat-grid-tile><img [src]="latexImage|async" alt="teste"/></mat-grid-tile>
+</mat-grid-list>
