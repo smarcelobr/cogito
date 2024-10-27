@@ -23,3 +23,9 @@ Content-Type: application/json
 OPTIONS /api/latex HTTP/1.1
 Host: localhost:8080
 Origin: http://localhost:4200
+
+
+### Pega o teste do IP
+# @no-log
+GET /api/teste
+Host: localhost:8080

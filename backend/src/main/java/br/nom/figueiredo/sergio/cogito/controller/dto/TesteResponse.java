@@ -1,12 +1,17 @@
 package br.nom.figueiredo.sergio.cogito.controller.dto;
 
+import br.nom.figueiredo.sergio.cogito.model.TesteStatus;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TesteResponse {
     private Long id;
-    private List<TesteQuestaoDto> perguntas;
+    private List<TesteQuestaoDto> perguntas = new ArrayList<>();
     private Integer nota;
-    private String status;
+    private TesteStatus status;
+    private LocalDateTime dataCriacao;
 
     public Long getId() {
         return id;
@@ -32,11 +37,19 @@ public class TesteResponse {
         this.nota = nota;
     }
 
-    public String getStatus() {
+    public TesteStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TesteStatus status) {
         this.status = status;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 }

@@ -1,6 +1,7 @@
 package br.nom.figueiredo.sergio.cogito.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 
 public class TesteQuestao {
     @Id
@@ -9,8 +10,11 @@ public class TesteQuestao {
     private Long perguntaId;
     private Long opcaoId;
 
+    @Transient
     private Pergunta pergunta;
+    @Transient
     private Opcao opcao;
+    @Transient
     private Gabarito gabarito;
 
     public Long getId() {
