@@ -1,5 +1,6 @@
 package br.nom.figueiredo.sergio.cogito.controller;
 
+import br.nom.figueiredo.sergio.cogito.LatexUtil;
 import br.nom.figueiredo.sergio.cogito.controller.dto.LatexRequest;
 import br.nom.figueiredo.sergio.cogito.controller.dto.LatexResponse;
 import org.scilab.forge.jlatexmath.TeXConstants;
@@ -28,19 +29,10 @@ public class LatexController {
     public ResponseEntity<LatexResponse> getLatex(@RequestBody LatexRequest latex) {
 
         try {
-            TeXFormula formula = new TeXFormula(latex.getLatex());
-            BufferedImage img = (BufferedImage) formula.createBufferedImage(TeXConstants.STYLE_DISPLAY, 16, Color.black, Color.white);
-            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                ImageIO.write(img, "png", baos);
-                byte[] barr = baos.toByteArray();
-                LatexResponse resposta = new LatexResponse();
-                resposta.setText("Teste");
-                resposta.setBase64PNG(Base64.getEncoder().encodeToString(barr));
-                return ResponseEntity.ok(resposta);
-//                DataBuffer imageData = DefaultDataBufferFactory.sharedInstance.wrap(barr);
-//                return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG)
-//                        .body(imageData);
-            }
+            LatexResponse resposta = new LatexResponse();
+            resposta.setText("Teste");
+            resposta.setBase64PNG(LatexUtil.latexToBase64PNG(latex.getLatex()));
+            return ResponseEntity.ok(resposta);
         } catch (Exception e) {
             LOGGER.error("An unknown IO error occurred while writing pixel", e);
         }

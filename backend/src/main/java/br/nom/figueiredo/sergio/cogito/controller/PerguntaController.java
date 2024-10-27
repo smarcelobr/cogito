@@ -1,10 +1,13 @@
 package br.nom.figueiredo.sergio.cogito.controller;
 
+import br.nom.figueiredo.sergio.cogito.LatexUtil;
+import br.nom.figueiredo.sergio.cogito.controller.dto.OpcaoImg;
+import br.nom.figueiredo.sergio.cogito.controller.dto.PerguntaImgResponse;
 import br.nom.figueiredo.sergio.cogito.model.Opcao;
 import br.nom.figueiredo.sergio.cogito.model.Pergunta;
 import br.nom.figueiredo.sergio.cogito.repository.OpcaoRepository;
 import br.nom.figueiredo.sergio.cogito.repository.PerguntaRepository;
-import br.nom.figueiredo.sergio.cogito.repository.RespostaRepository;
+import br.nom.figueiredo.sergio.cogito.repository.GabaritoRepository;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.slf4j.Logger;
@@ -32,26 +35,64 @@ public class PerguntaController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PerguntaController.class);
     private final PerguntaRepository perguntaRepository;
     private final OpcaoRepository opcaoRepository;
-    private final RespostaRepository respostaRepository;
+    private final GabaritoRepository gabaritoRepository;
 
-    public PerguntaController(PerguntaRepository perguntaRepository, OpcaoRepository opcaoRepository, RespostaRepository respostaRepository) {
+    public PerguntaController(PerguntaRepository perguntaRepository, OpcaoRepository opcaoRepository, GabaritoRepository gabaritoRepository) {
         this.perguntaRepository = perguntaRepository;
         this.opcaoRepository = opcaoRepository;
-        this.respostaRepository = respostaRepository;
+        this.gabaritoRepository = gabaritoRepository;
     }
 
-    @GetMapping
-    public Mono<ResponseEntity<DataBuffer>> getPergunta(@RequestParam("id") Long perguntaId) {
+    @GetMapping()
+    public Mono<ResponseEntity<PerguntaImgResponse>> getPNG(@RequestParam("id") Long perguntaId) {
 
         return perguntaRepository.findById(perguntaId)
                 .delayUntil(pergunta -> opcaoRepository
-                                .findAllByPergunta(pergunta.getId())
+                                .findAllByPerguntaId(pergunta.getId())
                                         .collectList()
                                                 .doOnNext(pergunta::withOpcoes)
-                                .and(respostaRepository
-                                        .findAllByPergunta(pergunta.getId())
+                                .and(gabaritoRepository
+                                        .findAllByPerguntaId(pergunta.getId())
                                         .collectList()
-                                        .doOnNext(pergunta::withRespostas)
+                                        .doOnNext(pergunta::withGabaritos)
+                                )
+                        )
+                .map(this::criaIMG)
+                .map(perguntaImgResponse -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(perguntaImgResponse));
+    }
+
+    private PerguntaImgResponse criaIMG(Pergunta pergunta) {
+        PerguntaImgResponse perguntaImgResponse = new PerguntaImgResponse();
+        perguntaImgResponse.setId(pergunta.getId());
+        perguntaImgResponse.setDisciplina(pergunta.getDisciplina());
+        perguntaImgResponse.setBase64PNG(LatexUtil.latexToBase64PNG(pergunta.getQuestao()));
+        int num = 0;
+        for (Opcao opcao: pergunta.getOpcoes()) {
+            OpcaoImg opcaoImg = new OpcaoImg();
+            opcaoImg.setId(opcao.getId());
+            opcaoImg.setLetra(String.valueOf((char)('a' + num)));
+            opcaoImg.setBase64PNG(LatexUtil.latexToBase64PNG(opcao.getAlternativa()));
+            perguntaImgResponse.getOpcoes().add(opcaoImg);
+            num++;
+        }
+
+        return perguntaImgResponse;
+    }
+
+    @GetMapping(headers = "accept=image/png")
+    public Mono<ResponseEntity<DataBuffer>> getImgPergunta(@RequestParam("id") Long perguntaId) {
+
+        return perguntaRepository.findById(perguntaId)
+                .delayUntil(pergunta -> opcaoRepository
+                                .findAllByPerguntaId(pergunta.getId())
+                                        .collectList()
+                                                .doOnNext(pergunta::withOpcoes)
+                                .and(gabaritoRepository
+                                        .findAllByPerguntaId(pergunta.getId())
+                                        .collectList()
+                                        .doOnNext(pergunta::withGabaritos)
                                 )
                         )
                 .map(this::criaPNG)

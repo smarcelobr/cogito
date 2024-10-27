@@ -1,7 +1,6 @@
 package br.nom.figueiredo.sergio.cogito.model;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,7 @@ public class Pergunta {
     private String disciplina;
     private String questao;
     private List<Opcao> opcoes = new ArrayList<>();
-    private List<Resposta> respostas = new ArrayList<>();
+    private List<Gabarito> gabaritos = new ArrayList<>();
 
     public long getId() {
         return id;
@@ -38,12 +37,12 @@ public class Pergunta {
         this.opcoes = opcoes;
     }
 
-    public List<Resposta> getRespostas() {
-        return respostas;
+    public List<Gabarito> getGabarito() {
+        return gabaritos;
     }
 
-    public void setRespostas(List<Resposta> respostas) {
-        this.respostas = respostas;
+    public void setGabarito(List<Gabarito> gabaritos) {
+        this.gabaritos = gabaritos;
     }
 
     public String getDisciplina() {
@@ -58,7 +57,7 @@ public class Pergunta {
         this.opcoes = new ArrayList<>(listaOpcoes);
     }
 
-    public void withRespostas(List<Resposta> listaRespostas) {
-        this.respostas = new ArrayList<>(listaRespostas);
+    public void withGabaritos(List<Gabarito> listaGabaritos) {
+        this.gabaritos = new ArrayList<>(listaGabaritos);
     }
 }

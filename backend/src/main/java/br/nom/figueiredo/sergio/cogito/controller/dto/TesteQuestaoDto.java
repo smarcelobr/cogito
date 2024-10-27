@@ -1,12 +1,9 @@
-package br.nom.figueiredo.sergio.cogito.model;
+package br.nom.figueiredo.sergio.cogito.controller.dto;
 
-import org.springframework.data.annotation.Id;
-
-public class Opcao {
-    @Id
+public class TesteQuestaoDto {
     private Long id;
     private Long perguntaId;
-    private String alternativa;
+    private Long opcaoId; /* opção escolhida */
 
     public Long getId() {
         return id;
@@ -24,11 +21,11 @@ public class Opcao {
         this.perguntaId = perguntaId;
     }
 
-    public String getAlternativa() {
-        return alternativa;
+    public Long getOpcaoId() {
+        return opcaoId;
     }
 
-    public void setAlternativa(String alternativa) {
-        this.alternativa = alternativa;
+    public void setOpcaoId(Long opcaoId) {
+        this.opcaoId = opcaoId;
     }
 }
