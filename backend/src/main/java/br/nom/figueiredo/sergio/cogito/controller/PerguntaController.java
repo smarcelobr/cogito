@@ -2,7 +2,9 @@ package br.nom.figueiredo.sergio.cogito.controller;
 
 import br.nom.figueiredo.sergio.cogito.model.Opcao;
 import br.nom.figueiredo.sergio.cogito.model.Pergunta;
+import br.nom.figueiredo.sergio.cogito.repository.OpcaoRepository;
 import br.nom.figueiredo.sergio.cogito.repository.PerguntaRepository;
+import br.nom.figueiredo.sergio.cogito.repository.RespostaRepository;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.slf4j.Logger;
@@ -29,15 +31,29 @@ public class PerguntaController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PerguntaController.class);
     private final PerguntaRepository perguntaRepository;
+    private final OpcaoRepository opcaoRepository;
+    private final RespostaRepository respostaRepository;
 
-    public PerguntaController(PerguntaRepository perguntaRepository) {
+    public PerguntaController(PerguntaRepository perguntaRepository, OpcaoRepository opcaoRepository, RespostaRepository respostaRepository) {
         this.perguntaRepository = perguntaRepository;
+        this.opcaoRepository = opcaoRepository;
+        this.respostaRepository = respostaRepository;
     }
 
     @GetMapping
     public Mono<ResponseEntity<DataBuffer>> getPergunta(@RequestParam("id") Long perguntaId) {
 
         return perguntaRepository.findById(perguntaId)
+                .delayUntil(pergunta -> opcaoRepository
+                                .findAllByPergunta(pergunta.getId())
+                                        .collectList()
+                                                .doOnNext(pergunta::withOpcoes)
+                                .and(respostaRepository
+                                        .findAllByPergunta(pergunta.getId())
+                                        .collectList()
+                                        .doOnNext(pergunta::withRespostas)
+                                )
+                        )
                 .map(this::criaPNG)
                 .map(imageData -> ResponseEntity.ok()
                         .contentType(MediaType.IMAGE_PNG)
@@ -46,7 +62,7 @@ public class PerguntaController {
 
     private DataBuffer criaPNG(Pergunta pergunta) {
             TeXFormula formula = new TeXFormula(montaLatex(pergunta));
-            BufferedImage img = (BufferedImage) formula.createBufferedImage(TeXConstants.STYLE_DISPLAY, 30, Color.white, Color.black);
+            BufferedImage img = (BufferedImage) formula.createBufferedImage(TeXConstants.STYLE_DISPLAY, 20, Color.black, Color.white);
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                 ImageIO.write(img, "png", baos);
                 byte[] barr = baos.toByteArray();
@@ -69,7 +85,7 @@ d) &\text{nenhuma das alternativas acima.}
     private String montaLatex(Pergunta pergunta) {
         StringBuilder latex = new StringBuilder(String.format("""
                         \\textbf{[%s]}\\\\
-                        \\text{%s}\\\\
+                        %s\\\\
                         \\begin{array}{rl}
                         """,
                 pergunta.getDisciplina(),

@@ -1,8 +1,8 @@
+### Download da imagem da pergunta
+# @no-log
 GET /api/pergunta?id=101
 Host: localhost:8080
 Accept: image/png
-
-> teste.png
 
 ###
 POST /api/latex HTTP/1.1

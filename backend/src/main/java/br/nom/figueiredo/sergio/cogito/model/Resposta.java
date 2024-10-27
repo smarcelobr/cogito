@@ -1,25 +1,25 @@
 package br.nom.figueiredo.sergio.cogito.model;
 
 public class Resposta {
-    private Long perguntaId;
-    private Long opcaoId;
+    private Long pergunta;
+    private Long opcao;
     private Boolean correta;
     private String explicacao;
 
-    public Long getPerguntaId() {
-        return perguntaId;
+    public Long getPergunta() {
+        return pergunta;
     }
 
-    public void setPerguntaId(Long perguntaId) {
-        this.perguntaId = perguntaId;
+    public void setPergunta(Long pergunta) {
+        this.pergunta = pergunta;
     }
 
-    public Long getOpcaoId() {
-        return opcaoId;
+    public Long getOpcao() {
+        return opcao;
     }
 
-    public void setOpcaoId(Long opcaoId) {
-        this.opcaoId = opcaoId;
+    public void setOpcao(Long opcao) {
+        this.opcao = opcao;
     }
 
     public Boolean getCorreta() {

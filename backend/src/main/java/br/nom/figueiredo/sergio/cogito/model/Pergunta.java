@@ -11,9 +11,7 @@ public class Pergunta {
     private long id;
     private String disciplina;
     private String questao;
-    @Transient
     private List<Opcao> opcoes = new ArrayList<>();
-    @Transient
     private List<Resposta> respostas = new ArrayList<>();
 
     public long getId() {
@@ -54,5 +52,13 @@ public class Pergunta {
 
     public void setDisciplina(String disciplina) {
         this.disciplina = disciplina;
+    }
+
+    public void withOpcoes(List<Opcao> listaOpcoes) {
+        this.opcoes = new ArrayList<>(listaOpcoes);
+    }
+
+    public void withRespostas(List<Resposta> listaRespostas) {
+        this.respostas = new ArrayList<>(listaRespostas);
     }
 }

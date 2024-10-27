@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 public class Opcao {
     @Id
     private Long id;
-    private Long perguntaId;
+    private Long pergunta;
     private String alternativa;
 
     public Long getId() {
@@ -16,12 +16,12 @@ public class Opcao {
         this.id = id;
     }
 
-    public Long getPerguntaId() {
-        return perguntaId;
+    public Long getPergunta() {
+        return pergunta;
     }
 
-    public void setPerguntaId(Long perguntaId) {
-        this.perguntaId = perguntaId;
+    public void setPergunta(Long pergunta) {
+        this.pergunta = pergunta;
     }
 
     public String getAlternativa() {
