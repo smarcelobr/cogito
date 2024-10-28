@@ -1,0 +1,28 @@
+.pergunta {
+  display: flex;
+  flex-direction: column;
+  margin: 3rem 3rem;
+}
+
+.opcao {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.opcao b.opcao-marcada {
+  border: 2px solid royalblue;
+  margin: 0;
+}
+
+.opcao b {
+  padding: 4px;
+  border-radius: 12px;
+  margin: 2px;
+}
+
+.opcao b:hover {
+  border: 2px solid lightskyblue;
+  margin: 0;
+}
+

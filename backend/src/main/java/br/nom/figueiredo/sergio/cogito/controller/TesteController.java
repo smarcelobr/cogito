@@ -35,8 +35,9 @@ public class TesteController {
         TesteResponse testeResponse = new TesteResponse();
         testeResponse.setId(teste.getId());
         testeResponse.setDataCriacao(teste.getDataCriacao());
-        testeResponse.setNota(teste.getNota());
         testeResponse.setStatus(teste.getStatus());
+        testeResponse.setNota(teste.getNota());
+        testeResponse.setDataConclusao(teste.getDataConclusao());
         for (TesteQuestao questao: teste.getQuestoes()) {
             TesteQuestaoDto testeQuestaoDto = convertDto(questao);
             testeResponse.getPerguntas().add(testeQuestaoDto);

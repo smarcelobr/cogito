@@ -1,0 +1,18 @@
+<p>tela-teste works!</p>
+<div>Id: {{teste.id}}</div>
+<div>Status: {{teste.status}}</div>
+<div>Data Criação: {{teste.dataCriacao}}</div>
+<div>Data Conclusão: {{teste.dataConclusao}}</div>
+<div>Nota: {{teste.nota}}</div>
+<div *ngFor="let pergunta of teste.perguntas" [id]="'questao_'+pergunta.id" class="pergunta">
+  <b>[{{pergunta.disciplina}}]</b>
+  <div>
+  <img [src]="pergunta.base64PNG" alt="pergunta" />
+  </div>
+  <div *ngFor="let opcao of pergunta.opcoes" [id]="'opcao_'+opcao.id" class="opcao">
+    <b [class.opcao-marcada]="pergunta.opcaoId===opcao.id">{{opcao.letra}})</b>
+    <div>
+    <img [src]="opcao.base64PNG" alt="opcao" />
+    </div>
+  </div>
+</div>

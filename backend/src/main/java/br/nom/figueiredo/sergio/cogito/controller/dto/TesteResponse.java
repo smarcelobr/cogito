@@ -12,6 +12,7 @@ public class TesteResponse {
     private Integer nota;
     private TesteStatus status;
     private LocalDateTime dataCriacao;
+    private LocalDateTime dataConclusao;
 
     public Long getId() {
         return id;
@@ -51,5 +52,13 @@ public class TesteResponse {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public void setDataConclusao(LocalDateTime dataConclusao) {
+        this.dataConclusao = dataConclusao;
+    }
+
+    public LocalDateTime getDataConclusao() {
+        return dataConclusao;
     }
 }
