@@ -1,3 +1,5 @@
+import {TesteQuestaoDto} from "../teste.service";
+
 export interface OpcaoView {
   id: number
   letra: string
@@ -20,4 +22,5 @@ export interface TesteView {
   status: string
   dataCriacao: string
   dataConclusao?: string
+
 }

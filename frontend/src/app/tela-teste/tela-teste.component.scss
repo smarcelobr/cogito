@@ -15,6 +15,11 @@
   margin: 0;
 }
 
+.opcao b.opcao-marcada:hover {
+  border: 2px dashed royalblue;
+  margin: 0;
+}
+
 .opcao b {
   padding: 4px;
   border-radius: 12px;
@@ -26,3 +31,6 @@
   margin: 0;
 }
 
+.nav-btn {
+  margin: 1rem;
+}

@@ -29,3 +29,22 @@ Origin: http://localhost:4200
 # @no-log
 GET /api/teste
 Host: localhost:8080
+
+### marca opcao que não existe
+POST /api/teste/12/marcar_opcao
+Host: localhost:8080
+Content-Type: application/json
+
+{
+  "questaoId": 10,
+  "opcaoId": 300
+}
+
+### desmarca opcao que não existe
+POST /api/teste/12/desmarcar_opcao
+Host: localhost:8080
+Content-Type: application/json
+
+{
+  "questaoId": 10
+}

@@ -4,12 +4,14 @@ import br.nom.figueiredo.sergio.cogito.model.Pergunta;
 import br.nom.figueiredo.sergio.cogito.model.Teste;
 import br.nom.figueiredo.sergio.cogito.model.TesteQuestao;
 import br.nom.figueiredo.sergio.cogito.model.TesteStatus;
+import br.nom.figueiredo.sergio.cogito.repository.OpcaoRepository;
 import br.nom.figueiredo.sergio.cogito.repository.TesteQuestaoRepository;
 import br.nom.figueiredo.sergio.cogito.repository.TesteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,11 +22,16 @@ public class TesteServiceImpl implements TesteService {
     private final PerguntaService perguntaService;
     private final TesteRepository testeRepository;
     private final TesteQuestaoRepository testeQuestaoRepository;
+    private final OpcaoRepository opcaoRepository;
 
-    public TesteServiceImpl(PerguntaService perguntaService, TesteRepository testeRepository, TesteQuestaoRepository testeQuestaoRepository) {
+    public TesteServiceImpl(PerguntaService perguntaService,
+                            TesteRepository testeRepository,
+                            TesteQuestaoRepository testeQuestaoRepository,
+                            OpcaoRepository opcaoRepository) {
         this.perguntaService = perguntaService;
         this.testeRepository = testeRepository;
         this.testeQuestaoRepository = testeQuestaoRepository;
+        this.opcaoRepository = opcaoRepository;
     }
 
     @Transactional
@@ -64,6 +71,71 @@ public class TesteServiceImpl implements TesteService {
                         .flatMap(this.testeQuestaoRepository::save)
                         .collectList()
                         .doOnNext(teste::withQuestoes));
+    }
+
+    @Transactional
+    @Override
+    public Mono<TesteQuestao> marcarOpcao(Long testeId, Long questaoId, Long opcaoId) {
+        // verifica se o teste está em preenchimento
+        return getTesteEQuestao(testeId, questaoId).flatMap((tupla) -> {
+            final TesteQuestao questao = tupla.getT2();
+            return this.opcaoRepository.findById(opcaoId)
+                    .switchIfEmpty(Mono.error(new CogitoServiceException(
+                            String.format("Opção %d não existe!", opcaoId))))
+                    .filter(opcao -> opcao.getPerguntaId().equals(questao.getPerguntaId()))
+                    .switchIfEmpty(Mono.error(new CogitoServiceException(
+                            String.format("Opção %d não é válida para a pergunta %d!",
+                                    opcaoId, questao.getPerguntaId()))))
+                    .flatMap(opcao -> {
+                        questao.setOpcaoId(opcao.getId());
+                        return this.testeQuestaoRepository.save(questao);
+                    });
+        });
+    }
+
+    @Transactional
+    @Override
+    public Mono<TesteQuestao> desmarcarOpcao(Long testeId, Long questaoId) {
+        // verifica se o teste está em preenchimento
+        return getTesteEQuestao(testeId, questaoId)
+                .flatMap((tupla) -> {
+            final TesteQuestao questao = tupla.getT2();
+            questao.setOpcaoId(null);
+            return this.testeQuestaoRepository.save(questao);
+        });
+    }
+
+    @Transactional
+    @Override
+    public Mono<Teste> corrigir(Long testeId) {
+
+        return this.testeRepository.findById(testeId)
+                .flatMap(teste-> Mono.error(new CogitoServiceException("Não implementado.")));
+
+    }
+
+    private Mono<Tuple2<Teste, TesteQuestao>> getTesteEQuestao(Long testeId, Long questaoId) {
+        return Mono.zip(this.testeRepository.findById(testeId)
+                        .switchIfEmpty(Mono.error(new CogitoServiceException(
+                                String.format("Teste %d não existe!", testeId))))
+                        .filter(teste -> List.of(TesteStatus.NOVO,
+                                TesteStatus.EM_ANDAMENTO).contains(teste.getStatus()))
+                        .switchIfEmpty(Mono.error(new CogitoServiceException(
+                                String.format("Teste %d já foi concluído!", testeId))))
+                        .flatMap(teste -> {
+                            // altera o teste para EM_ANDAMENTO, caso seja novo.
+                            if (teste.getStatus() == TesteStatus.NOVO) {
+                                teste.setStatus(TesteStatus.EM_ANDAMENTO);
+                                return this.testeRepository.save(teste);
+                            } else {
+                                return Mono.just(teste);
+                            }
+                        })
+                , this.testeQuestaoRepository.findById(questaoId)
+                        .switchIfEmpty(Mono.error(new CogitoServiceException(
+                                String.format("Questão %d não existe!", questaoId))))
+
+        );
     }
 
     private TesteQuestao criaQuestao(Pergunta pergunta) {

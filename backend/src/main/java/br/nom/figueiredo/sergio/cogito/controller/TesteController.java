@@ -1,14 +1,13 @@
 package br.nom.figueiredo.sergio.cogito.controller;
 
-import br.nom.figueiredo.sergio.cogito.controller.dto.TesteQuestaoDto;
-import br.nom.figueiredo.sergio.cogito.controller.dto.TesteResponse;
+import br.nom.figueiredo.sergio.cogito.LatexUtil;
+import br.nom.figueiredo.sergio.cogito.controller.dto.*;
 import br.nom.figueiredo.sergio.cogito.model.Teste;
 import br.nom.figueiredo.sergio.cogito.model.TesteQuestao;
 import br.nom.figueiredo.sergio.cogito.service.TesteService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
@@ -31,6 +30,43 @@ public class TesteController {
                 .map(this::convertDto);
     }
 
+    @PostMapping("{testeId}/marcar_opcao")
+    public Mono<ResponseEntity<TesteQuestaoDto>> marcarOpcao(
+            @PathVariable Long testeId,
+            @RequestBody MarcarOpcaoRequest marcarOpcaoRequest) {
+
+        return this.testeService.marcarOpcao(testeId,
+                        marcarOpcaoRequest.getQuestaoId(), marcarOpcaoRequest.getOpcaoId())
+                .map(this::convertDto)
+                .map(dto ->
+                        ResponseEntity.ok()
+                                .body(dto));
+    }
+
+    @PostMapping("{testeId}/desmarcar_opcao")
+    public Mono<ResponseEntity<TesteQuestaoDto>> desmarcarOpcao(
+            @PathVariable Long testeId,
+            @RequestBody DesmarcarOpcaoRequest marcarOpcaoRequest) {
+
+        return this.testeService.desmarcarOpcao(testeId,
+                        marcarOpcaoRequest.getQuestaoId())
+                .map(this::convertDto)
+                .map(dto ->
+                        ResponseEntity.ok()
+                                .body(dto));
+    }
+
+    @PostMapping("{testeId}/corrigir")
+    public Mono<ResponseEntity<TesteResponse>> corrigir(
+            @PathVariable Long testeId) {
+
+        return this.testeService.corrigir(testeId)
+                .map(this::convertDto)
+                .map(dto ->
+                        ResponseEntity.ok()
+                                .body(dto));
+    }
+
     private TesteResponse convertDto(Teste teste) {
         TesteResponse testeResponse = new TesteResponse();
         testeResponse.setId(teste.getId());
@@ -38,7 +74,7 @@ public class TesteController {
         testeResponse.setStatus(teste.getStatus());
         testeResponse.setNota(teste.getNota());
         testeResponse.setDataConclusao(teste.getDataConclusao());
-        for (TesteQuestao questao: teste.getQuestoes()) {
+        for (TesteQuestao questao : teste.getQuestoes()) {
             TesteQuestaoDto testeQuestaoDto = convertDto(questao);
             testeResponse.getPerguntas().add(testeQuestaoDto);
         }
