@@ -3,19 +3,18 @@ package br.nom.figueiredo.sergio.cogito.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 
+import java.util.List;
+
 public class TesteQuestao {
     @Id
     private Long id;
     private Long testeId;
+    private Integer peso;
     private Long perguntaId;
     private Long opcaoId;
 
     @Transient
     private Pergunta pergunta;
-    @Transient
-    private Opcao opcao;
-    @Transient
-    private Gabarito gabarito;
 
     public Long getId() {
         return id;
@@ -58,19 +57,22 @@ public class TesteQuestao {
     }
 
     public Opcao getOpcao() {
-        return opcao;
+        return this.pergunta.getOpcoes().stream()
+                .filter(opcao -> opcao.getId().equals(this.opcaoId))
+                .findFirst().orElse(null);
     }
 
-    public void setOpcao(Opcao opcao) {
-        this.opcao = opcao;
+    public List<Gabarito> getGabarito() {
+        return this.pergunta.getGabarito().stream()
+                .filter(Gabarito::getCorreta)
+                .toList();
     }
 
-    public Gabarito getGabarito() {
-        return gabarito;
+    public Integer getPeso() {
+        return peso;
     }
 
-    public void setGabarito(Gabarito gabarito) {
-        this.gabarito = gabarito;
+    public void setPeso(Integer peso) {
+        this.peso = peso;
     }
-
 }

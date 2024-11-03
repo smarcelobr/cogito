@@ -5,9 +5,7 @@ import br.nom.figueiredo.sergio.cogito.controller.dto.OpcaoImg;
 import br.nom.figueiredo.sergio.cogito.controller.dto.PerguntaImgResponse;
 import br.nom.figueiredo.sergio.cogito.model.Opcao;
 import br.nom.figueiredo.sergio.cogito.model.Pergunta;
-import br.nom.figueiredo.sergio.cogito.repository.OpcaoRepository;
-import br.nom.figueiredo.sergio.cogito.repository.PerguntaRepository;
-import br.nom.figueiredo.sergio.cogito.repository.GabaritoRepository;
+import br.nom.figueiredo.sergio.cogito.service.PerguntaService;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.slf4j.Logger;
@@ -33,30 +31,16 @@ import java.io.IOException;
 public class PerguntaController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PerguntaController.class);
-    private final PerguntaRepository perguntaRepository;
-    private final OpcaoRepository opcaoRepository;
-    private final GabaritoRepository gabaritoRepository;
+    private final PerguntaService perguntaService;
 
-    public PerguntaController(PerguntaRepository perguntaRepository, OpcaoRepository opcaoRepository, GabaritoRepository gabaritoRepository) {
-        this.perguntaRepository = perguntaRepository;
-        this.opcaoRepository = opcaoRepository;
-        this.gabaritoRepository = gabaritoRepository;
+    public PerguntaController(PerguntaService perguntaService) {
+        this.perguntaService = perguntaService;
     }
 
     @GetMapping()
     public Mono<ResponseEntity<PerguntaImgResponse>> getPNG(@RequestParam("id") Long perguntaId) {
 
-        return perguntaRepository.findById(perguntaId)
-                .delayUntil(pergunta -> opcaoRepository
-                                .findAllByPerguntaId(pergunta.getId())
-                                        .collectList()
-                                                .doOnNext(pergunta::withOpcoes)
-                                .and(gabaritoRepository
-                                        .findAllByPerguntaId(pergunta.getId())
-                                        .collectList()
-                                        .doOnNext(pergunta::withGabaritos)
-                                )
-                        )
+        return this.perguntaService.getPerguntaCompleta(perguntaId)
                 .map(this::criaIMG)
                 .map(perguntaImgResponse -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
@@ -84,17 +68,7 @@ public class PerguntaController {
     @GetMapping(headers = "accept=image/png")
     public Mono<ResponseEntity<DataBuffer>> getImgPergunta(@RequestParam("id") Long perguntaId) {
 
-        return perguntaRepository.findById(perguntaId)
-                .delayUntil(pergunta -> opcaoRepository
-                                .findAllByPerguntaId(pergunta.getId())
-                                        .collectList()
-                                                .doOnNext(pergunta::withOpcoes)
-                                .and(gabaritoRepository
-                                        .findAllByPerguntaId(pergunta.getId())
-                                        .collectList()
-                                        .doOnNext(pergunta::withGabaritos)
-                                )
-                        )
+        return perguntaService.getPerguntaCompleta(perguntaId)
                 .map(this::criaPNG)
                 .map(imageData -> ResponseEntity.ok()
                         .contentType(MediaType.IMAGE_PNG)

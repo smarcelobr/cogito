@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {TesteService} from "../teste.service";
-import {catchError, concatMap, from, map, switchMap, tap} from "rxjs";
+import {TesteResponse, TesteService} from "../teste.service";
+import {BehaviorSubject, catchError, concatMap, from, map, Subject, switchMap, tap} from "rxjs";
 import {OpcaoView, QuestaoView, TesteView} from "./tela-teste.model";
 import {PerguntaImgResponse, PerguntaService} from "../pergunta.service";
 import {NgForOf, NgIf} from "@angular/common";
@@ -9,6 +9,7 @@ import {MatDivider} from "@angular/material/divider";
 import {MatProgressBar} from "@angular/material/progress-bar";
 import {HttpErrorResponse} from "@angular/common/http";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'app-tela-teste',
@@ -18,7 +19,8 @@ import {MatSnackBar} from "@angular/material/snack-bar";
     NgIf,
     MatButton,
     MatDivider,
-    MatProgressBar
+    MatProgressBar,
+    MatIcon
   ],
   templateUrl: './tela-teste.component.html',
   styleUrl: './tela-teste.component.scss'
@@ -34,41 +36,52 @@ export class TelaTesteComponent implements OnInit {
   }
   perguntaAtivaIdx = 0;
 
+  testeSubject = new Subject<TesteResponse>();
+  teste$ = this.testeSubject.asObservable();
+
   constructor(private testeService: TesteService,
               private perguntaService: PerguntaService) {
   }
 
   ngOnInit(): void {
 
+    this.teste$
+      .pipe(
+      map(response => ({
+        id: response.id,
+        dataCriacao: response.dataCriacao,
+        status: response.status,
+        dataConclusao: response.dataConclusao,
+        nota: response.nota,
+        perguntas: response.perguntas.map(
+          testeQuestaoDto => ({
+            id: testeQuestaoDto.id,
+            perguntaId: testeQuestaoDto.perguntaId,
+            opcaoId: testeQuestaoDto.opcaoId,
+            opcoes: [],
+            disciplina: '',
+            base64PNG: '',
+            correto: testeQuestaoDto.correto,
+            explicacao: testeQuestaoDto.explicacao
+          } as QuestaoView)
+        ),
+      })),
+      switchMap(testeView => from(testeView.perguntas)
+        .pipe(
+          concatMap(questao =>
+            this.perguntaService.get(questao.perguntaId).pipe(
+              tap(perguntaImgResponse => this.combina(questao, perguntaImgResponse))
+            )),
+          map(questao => testeView)
+        ))
+    ).subscribe(testeView => this.teste = testeView);
+
+
     this.testeService
       .get()
       .pipe(
-        map(response => ({
-          id: response.id,
-          dataCriacao: response.dataCriacao,
-          status: response.status,
-          dataConclusao: response.dataConclusao,
-          nota: response.nota,
-          perguntas: response.perguntas.map(
-            testeQuestaoDto => ({
-              id: testeQuestaoDto.id,
-              perguntaId: testeQuestaoDto.perguntaId,
-              opcaoId: testeQuestaoDto.opcaoId,
-              opcoes: [],
-              disciplina: '',
-              base64PNG: ''
-            } as QuestaoView)
-          ),
-        })),
-        switchMap(testeView => from(testeView.perguntas)
-          .pipe(
-            concatMap(questao =>
-              this.perguntaService.get(questao.perguntaId).pipe(
-                tap(perguntaImgResponse => this.combina(questao, perguntaImgResponse))
-              )),
-            map(questao => testeView)
-          ))
-      ).subscribe(testeView => this.teste = testeView);
+        catchError(this.mostraErro())
+      ).subscribe(teste=>this.testeSubject.next(teste))
   }
 
   private combina(questao: QuestaoView, perguntaImgResponse: PerguntaImgResponse) {
@@ -115,15 +128,18 @@ export class TelaTesteComponent implements OnInit {
     }
     chamada
       .pipe(
-        catchError((err: HttpErrorResponse) => {
-          // console.log(err);
-          this._snackBar.open(`Erro ${err.status}: ${err.error.detail}`, undefined, {
-            duration: 1600
-          });
-          throw err;
-        })
+        catchError(this.mostraErro())
       ).subscribe(testeQuestaoDto => pergunta.opcaoId = testeQuestaoDto.opcaoId)
+  }
 
+  private mostraErro() {
+    return (err: HttpErrorResponse) => {
+      // console.log(err);
+      this._snackBar.open(`Erro ${err.status}: ${err.error.detail}`, undefined, {
+        duration: 1600
+      });
+      throw err;
+    };
   }
 
   countRespondidas() {
@@ -134,8 +150,10 @@ export class TelaTesteComponent implements OnInit {
   }
 
   enviar() {
-    console.log("Enviar clicado!");
 
-    this.teste.perguntas.forEach(pergunta => pergunta.opcaoId = undefined);
+    this.testeService.corrigir(this.teste.id)
+      .pipe(catchError(this.mostraErro()))
+      .subscribe(testeResponse=>this.testeSubject.next(testeResponse))
   }
+
 }

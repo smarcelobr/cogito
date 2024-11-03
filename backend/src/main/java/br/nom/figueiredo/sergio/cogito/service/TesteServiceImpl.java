@@ -13,6 +13,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -108,10 +110,33 @@ public class TesteServiceImpl implements TesteService {
     @Transactional
     @Override
     public Mono<Teste> corrigir(Long testeId) {
-
         return this.testeRepository.findById(testeId)
-                .flatMap(teste-> Mono.error(new CogitoServiceException("Não implementado.")));
+                .switchIfEmpty(Mono.error(new CogitoServiceException(String.format("Teste %d não encontrado.", testeId))))
+                .filter(teste -> List.of(TesteStatus.NOVO, TesteStatus.EM_ANDAMENTO).contains(teste.getStatus()))
+                .switchIfEmpty(Mono.error(new CogitoServiceException(String.format("Teste %d já corrigido ou cancelado.", testeId))))
+                .delayUntil(teste -> this.testeQuestaoRepository.findAllByTesteIdOrderById(teste.getId())
+                        .delayUntil(testeQuestao -> this.perguntaService.getPerguntaCompleta(testeQuestao.getPerguntaId())
+                                .doOnNext(testeQuestao::setPergunta))
+                        .collectList()
+                        .doOnNext(teste::withQuestoes))
+                .flatMap(this::corrigirTeste);
+    }
 
+    private Mono<Teste> corrigirTeste(Teste teste) {
+        BigDecimal pesoTotal = teste.getQuestoes().stream()
+                .map(questao-> new BigDecimal(questao.getPeso()))// pega o peso da questão correta
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal nota = teste.getQuestoes().stream()
+                .filter(questao->questao.getOpcaoId().equals(questao.getGabarito().get(0).getOpcaoId())) // questão correta?
+                .map(questao-> new BigDecimal(questao.getPeso()).setScale(2, RoundingMode.HALF_UP))// pega o peso da questão correta
+                .reduce(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), (notaParcial, peso) ->
+                        notaParcial.add(peso.divide(pesoTotal, RoundingMode.HALF_UP)));
+
+        teste.setNota(nota.min(BigDecimal.ONE).multiply(BigDecimal.TEN).intValue());
+        teste.setDataConclusao(LocalDateTime.now());
+        teste.setStatus(TesteStatus.CORRIGIDO);
+        return this.testeRepository.save(teste);
     }
 
     private Mono<Tuple2<Teste, TesteQuestao>> getTesteEQuestao(Long testeId, Long questaoId) {

@@ -4,22 +4,46 @@
 <div>Data Criação: {{ teste.dataCriacao }}</div>
 <div>Data Conclusão: {{ teste.dataConclusao }}</div>
 <div>Nota: {{ teste.nota }}</div>-->
+<div class="corrigido" *ngIf="teste.status==='CORRIGIDO'">
+  <div>Nota: <span class="nota">{{ teste.nota }}</span></div>
+</div>
+
 <mat-progress-bar mode="determinate" value="{{countRespondidas()*100/teste.perguntas.length}}"></mat-progress-bar>
 <div *ngFor="let pergunta of teste.perguntas; let idx=index">
-  <div *ngIf="idx===perguntaAtivaIdx" [id]="'questao_'+pergunta.id" class="pergunta">
-    <b>{{idx+1}}) [{{ pergunta.disciplina }}]</b>
-    <div>
-      <img [src]="pergunta.base64PNG" alt="pergunta"/>
-    </div>
-    <div *ngFor="let opcao of pergunta.opcoes" [id]="'opcao_'+opcao.id" class="opcao">
-      <b [class.opcao-marcada]="pergunta.opcaoId===opcao.id" (click)="marcar_opcao(pergunta, opcao)">{{ opcao.letra }})</b>
+  <div *ngIf="idx===perguntaAtivaIdx" [id]="'questao_'+pergunta.id" class="questao">
+    <div class="pergunta">
+      <b>{{ idx + 1 }}) [{{ pergunta.disciplina }}]</b>
       <div>
-        <img [src]="opcao.base64PNG" alt="opcao"/>
+        <img [src]="pergunta.base64PNG" alt="pergunta"/>
+      </div>
+      <div *ngFor="let opcao of pergunta.opcoes" [id]="'opcao_'+opcao.id" class="opcao"
+           [class.opcao-marcada]="pergunta.opcaoId===opcao.id"
+           [class.opcao-certa]="pergunta.opcaoId===opcao.id && pergunta.correto===true"
+           [class.opcao-errada]="pergunta.opcaoId===opcao.id && (pergunta.correto===false)">
+        <b (click)="marcar_opcao(pergunta, opcao)">{{ opcao.letra }})</b>
+        <div>
+          <img [src]="opcao.base64PNG" alt="opcao"/>
+        </div>
+      </div>
+      <div *ngIf="teste.status==='CORRIGIDO' && pergunta.explicacao" class="explicacao">
+        <img [src]="pergunta.explicacao" alt="explicacao"/>
+      </div>
+    </div>
+    <div class="resultado" *ngIf="teste.status==='CORRIGIDO'">
+      <div *ngIf="pergunta.correto">
+        <mat-icon color="primary">check_circle</mat-icon>
+      </div>
+      <div *ngIf="!pergunta.correto">
+        <mat-icon color="warn">error</mat-icon>
       </div>
     </div>
   </div>
 </div>
 <mat-divider></mat-divider>
 <button mat-stroked-button class="nav-btn" (click)="anterior()" [disabled]="perguntaAtivaIdx<=0">Anterior</button>
-<button mat-stroked-button class="nav-btn" (click)="proxima()" [disabled]="perguntaAtivaIdx>=teste.perguntas.length-1">Pr&oacute;xima</button>
-<button mat-stroked-button class="nav-btn" (click)="enviar()" [disabled]="countRespondidas()<teste.perguntas.length">Enviar</button>
+<button mat-stroked-button class="nav-btn" (click)="proxima()" [disabled]="perguntaAtivaIdx>=teste.perguntas.length-1">
+  Pr&oacute;xima
+</button>
+<button mat-stroked-button class="nav-btn" (click)="enviar()" [disabled]="countRespondidas()<teste.perguntas.length">
+  Enviar
+</button>

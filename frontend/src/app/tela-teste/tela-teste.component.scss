@@ -1,7 +1,20 @@
+.questao {
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  align-items: center;
+}
+
+.corrigido .nota {
+  font-size: large;
+  font-style: italic;
+  font-family: "Lucida Handwriting", cursive;
+}
+
 .pergunta {
   display: flex;
   flex-direction: column;
-  margin: 3rem 3rem;
+  margin: 1rem 1rem;
 }
 
 .opcao {
@@ -10,12 +23,24 @@
   gap: 1rem;
 }
 
-.opcao b.opcao-marcada {
+.opcao.opcao-marcada.opcao-certa {
+  padding: 3px;
+  border: 2px dashed green;
+  border-radius: 3px;
+}
+
+.opcao.opcao-marcada.opcao-errada {
+  padding: 3px;
+  border: 2px dashed red;
+  border-radius: 3px;
+}
+
+.opcao.opcao-marcada b {
   border: 2px solid royalblue;
   margin: 0;
 }
 
-.opcao b.opcao-marcada:hover {
+.opcao.opcao-marcada b:hover {
   border: 2px dashed royalblue;
   margin: 0;
 }

@@ -19,6 +19,9 @@ public class LatexUtil {
      * @return base64 do PNG equivalente.
      */
     public static String latexToBase64PNG(String latex) {
+        if (latex==null) {
+            return null;
+        }
         try {
             TeXFormula formula = new TeXFormula(latex);
             BufferedImage img = (BufferedImage) formula.createBufferedImage(TeXConstants.STYLE_DISPLAY, 16, Color.black, Color.white);

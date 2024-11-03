@@ -63,5 +63,5 @@ INSERT INTO gabarito (pergunta_id, opcao_id, correta, explicacao) VALUES (12, 11
 
 INSERT INTO teste (id, status, data_criacao, data_conclusao, ip, nota) VALUES (1, 'EM_ANDAMENTO', '2024-10-27 10:17:09', null, '192.162.2.10', null);
 
-INSERT INTO teste_questao (id, teste_id, pergunta_id, opcao_id) VALUES (1, 1, 100, 102);
-INSERT INTO teste_questao (id, teste_id, pergunta_id, opcao_id) VALUES (2, 1, 101, 105);
+INSERT INTO teste_questao (id, teste_id, peso, pergunta_id, opcao_id) VALUES (1, 1, 1,100, 102);
+INSERT INTO teste_questao (id, teste_id, peso, pergunta_id, opcao_id) VALUES (2, 1, 1,101, 105);

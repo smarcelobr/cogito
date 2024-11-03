@@ -2,8 +2,10 @@ package br.nom.figueiredo.sergio.cogito.controller;
 
 import br.nom.figueiredo.sergio.cogito.LatexUtil;
 import br.nom.figueiredo.sergio.cogito.controller.dto.*;
+import br.nom.figueiredo.sergio.cogito.model.Gabarito;
 import br.nom.figueiredo.sergio.cogito.model.Teste;
 import br.nom.figueiredo.sergio.cogito.model.TesteQuestao;
+import br.nom.figueiredo.sergio.cogito.model.TesteStatus;
 import br.nom.figueiredo.sergio.cogito.service.TesteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -30,7 +32,7 @@ public class TesteController {
                 .map(this::convertDto);
     }
 
-    @PostMapping("{testeId}/marcar_opcao")
+    @PutMapping("{testeId}/marcar_opcao")
     public Mono<ResponseEntity<TesteQuestaoDto>> marcarOpcao(
             @PathVariable Long testeId,
             @RequestBody MarcarOpcaoRequest marcarOpcaoRequest) {
@@ -43,7 +45,7 @@ public class TesteController {
                                 .body(dto));
     }
 
-    @PostMapping("{testeId}/desmarcar_opcao")
+    @PutMapping("{testeId}/desmarcar_opcao")
     public Mono<ResponseEntity<TesteQuestaoDto>> desmarcarOpcao(
             @PathVariable Long testeId,
             @RequestBody DesmarcarOpcaoRequest marcarOpcaoRequest) {
@@ -56,7 +58,7 @@ public class TesteController {
                                 .body(dto));
     }
 
-    @PostMapping("{testeId}/corrigir")
+    @GetMapping("{testeId}/corrigir")
     public Mono<ResponseEntity<TesteResponse>> corrigir(
             @PathVariable Long testeId) {
 
@@ -76,6 +78,14 @@ public class TesteController {
         testeResponse.setDataConclusao(teste.getDataConclusao());
         for (TesteQuestao questao : teste.getQuestoes()) {
             TesteQuestaoDto testeQuestaoDto = convertDto(questao);
+            if (teste.getStatus()==TesteStatus.CORRIGIDO) {
+                Gabarito gabarito = questao.getPergunta().getGabarito()
+                        .stream()
+                                .filter(gab->gab.getOpcaoId().equals(questao.getOpcaoId()))
+                                        .findFirst().orElse(null);
+                testeQuestaoDto.setCorreto(Objects.requireNonNull(gabarito).getCorreta());
+                testeQuestaoDto.setExplicacao(LatexUtil.latexToBase64PNG(gabarito.getExplicacao()));
+            }
             testeResponse.getPerguntas().add(testeQuestaoDto);
         }
         return testeResponse;
