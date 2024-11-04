@@ -47,3 +47,33 @@ Content-Type: application/json
 {
   "questaoId": 10
 }
+
+### Terminal: Lista iptables
+# @no-log
+POST /api/terminal
+Host: {{cogitoURL}}
+Content-Type: text/plain
+
+sudo iptables -L FORWARD -n --line-numbers -v
+
+### Terminal: Inclui DROP conexão do IP 192.168.2.10
+# @no-log
+POST /api/terminal
+Host: {{cogitoURL}}
+Content-Type: text/plain
+
+sudo iptables -I FORWARD -i lan0 -o wlan0 -s 192.168.2.10 -j DROP
+
+### Terminal: Exclui DROP conexão do IP 192.168.2.10
+# @no-log
+POST /api/terminal
+Host: {{cogitoURL}}
+Content-Type: text/plain
+
+sudo iptables -D FORWARD -i lan0 -o wlan0 -s 192.168.2.10 -j DROP
+
+### Iptables: Lista maquinas DROPPED
+# @no-log
+GET /api/iptables/dropped
+Host: {{cogitoURL}}
+Accept: application/json

@@ -1,5 +1,6 @@
 package br.nom.figueiredo.sergio.cogito.service;
 
+import br.nom.figueiredo.sergio.cogito.jobs.ConfereConexoesEvent;
 import br.nom.figueiredo.sergio.cogito.model.Pergunta;
 import br.nom.figueiredo.sergio.cogito.model.Teste;
 import br.nom.figueiredo.sergio.cogito.model.TesteQuestao;
@@ -7,6 +8,7 @@ import br.nom.figueiredo.sergio.cogito.model.TesteStatus;
 import br.nom.figueiredo.sergio.cogito.repository.OpcaoRepository;
 import br.nom.figueiredo.sergio.cogito.repository.TesteQuestaoRepository;
 import br.nom.figueiredo.sergio.cogito.repository.TesteRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -25,15 +27,18 @@ public class TesteServiceImpl implements TesteService {
     private final TesteRepository testeRepository;
     private final TesteQuestaoRepository testeQuestaoRepository;
     private final OpcaoRepository opcaoRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public TesteServiceImpl(PerguntaService perguntaService,
                             TesteRepository testeRepository,
                             TesteQuestaoRepository testeQuestaoRepository,
-                            OpcaoRepository opcaoRepository) {
+                            OpcaoRepository opcaoRepository,
+                            ApplicationEventPublisher applicationEventPublisher) {
         this.perguntaService = perguntaService;
         this.testeRepository = testeRepository;
         this.testeQuestaoRepository = testeQuestaoRepository;
         this.opcaoRepository = opcaoRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -136,7 +141,9 @@ public class TesteServiceImpl implements TesteService {
         teste.setNota(nota.min(BigDecimal.ONE).multiply(BigDecimal.TEN).intValue());
         teste.setDataConclusao(LocalDateTime.now());
         teste.setStatus(TesteStatus.CORRIGIDO);
-        return this.testeRepository.save(teste);
+        return this.testeRepository.save(teste)
+                .doOnNext(testeSalvo ->
+                        applicationEventPublisher.publishEvent(new ConfereConexoesEvent(testeSalvo)));
     }
 
     private Mono<Tuple2<Teste, TesteQuestao>> getTesteEQuestao(Long testeId, Long questaoId) {
