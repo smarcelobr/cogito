@@ -11,21 +11,22 @@ export interface TesteQuestaoDto {
 }
 
 export interface TesteResponse {
-  id: number
-  perguntas: TesteQuestaoDto[]
-  nota?: number
-  status: string
-  dataCriacao: string
-  dataConclusao?: string
+  id: number;
+  ip: string;
+  perguntas: TesteQuestaoDto[];
+  nota?: number;
+  status: string;
+  dataCriacao: string;
+  dataConclusao?: string;
 }
 
 export interface MarcarOpcaoRequest {
-  questaoId: number
-  opcaoId: number
+  questaoId: number;
+  opcaoId: number;
 }
 
 export interface DesmarcarOpcaoRequest {
-  questaoId: number
+  questaoId: number;
 }
 
 @Injectable({

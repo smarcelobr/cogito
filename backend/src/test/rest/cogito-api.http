@@ -1,18 +1,18 @@
 ### Download da imagem da pergunta
 # @no-log
 GET /api/pergunta?id=101
-Host: localhost:8080
+Host: {{cogitoURL}}
 Accept: application/json
 
 ### Download da imagem da pergunta
 # @no-log
-GET /api/pergunta?id=101
-Host: localhost:8080
+GET /api/pergunta?id=103
+Host: {{cogitoURL}}
 Accept: image/png
 
 ###
 POST /api/latex HTTP/1.1
-Host: localhost:8080
+Host: {{cogitoURL}}
 Content-Type: application/json
 
 {

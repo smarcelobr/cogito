@@ -18,7 +18,7 @@ public interface TesteRepository extends ReactiveCrudRepository<Teste, Long> {
            "WHERE T.status = 'CORRIGIDO' " +
            "  AND T.nota IS NOT NULL " +
            "  AND T.data_conclusao IS NOT NULL " +
-           "  AND DATE_ADD(T.data_conclusao, INTERVAL (30*T.nota) MINUTE) > :dataValidade " +
+           "  AND DATE_ADD(T.data_conclusao, INTERVAL (18*T.nota) MINUTE) > :dataValidade " +
            "  AND MIP.maquina_id = :maquinaId")
     Flux<Teste> findCorrigidosByMaquinaAndValidade(Long maquinaId, LocalDateTime dataValidade);
 }

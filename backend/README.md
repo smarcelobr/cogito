@@ -9,6 +9,13 @@ Responda corretamente às questões para ganhar cotas de acesso à internet.
     frontend> cd ..
     > .\gradlew clean 
 
+## Start no Raspberry
+
+`start.sh`
+
+    #!/bin/bash
+    java -Dlogging.level.br.nom.figueiredo.sergio.cogito=TRACE -jar cogito-0.0.1-SNAPSHOT.jar
+
 ## DATABASE - MariaDB
 
 ### Criando o Database oficial e de testes

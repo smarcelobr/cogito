@@ -13,6 +13,7 @@ public class TesteResponse {
     private TesteStatus status;
     private LocalDateTime dataCriacao;
     private LocalDateTime dataConclusao;
+    private String ip;
 
     public Long getId() {
         return id;
@@ -60,5 +61,13 @@ public class TesteResponse {
 
     public LocalDateTime getDataConclusao() {
         return dataConclusao;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getIp() {
+        return ip;
     }
 }

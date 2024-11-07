@@ -101,7 +101,7 @@ public class IptablesServiceImpl implements IptablesService {
                         /* pega os IPs da máquina que já estão com rule DROP */
                         .filter(rule -> "DROP".equals(rule.getTarget()) &&
                                         "lan0".equals(rule.getIn()) &&
-                                        "wlan0".equals(rule.getOut()) &&
+                                        "wan0".equals(rule.getOut()) &&
                                         ipsParaDrop2.contains(rule.getSource()))
                         .map(IptableRule::getSource)
                         .doOnNext(ipsParaDrop2::remove))
@@ -112,13 +112,13 @@ public class IptablesServiceImpl implements IptablesService {
                 .thenMany(this.getIptablesForwardRules()
                         .filter(rule -> "DROP".equals(rule.getTarget()) &&
                                         "lan0".equals(rule.getIn()) &&
-                                        "wlan0".equals(rule.getOut()) &&
+                                        "wan0".equals(rule.getOut()) &&
                                         ipsDaMaquina.contains(rule.getSource())));
 
     }
 
     private void addDropRuleByIP(String ip) {
-        int exitCode = this.executaTerminal(String.format("sudo iptables -I FORWARD -i lan0 -o wlan0 -s %s -j DROP", ip),
+        int exitCode = this.executaTerminal(String.format("sudo iptables -I FORWARD -i lan0 -o wan0 -s %s -j DROP", ip),
                 LOGGER::debug);
         if (exitCode != 0) {
             throw new CogitoServiceException(String.format("Falha ao criar drop rule para IP %s", ip));
@@ -139,7 +139,7 @@ public class IptablesServiceImpl implements IptablesService {
                 /* pega os IPs da máquina que já estão com rule DROP */
                 .filter(rule -> "DROP".equals(rule.getTarget()) &&
                                 "lan0".equals(rule.getIn()) &&
-                                "wlan0".equals(rule.getOut()) &&
+                                "wan0".equals(rule.getOut()) &&
                                 ipsDaMaquina.contains(rule.getSource()))
                 .map(IptableRule::getSource)
                 .distinct()
@@ -150,7 +150,7 @@ public class IptablesServiceImpl implements IptablesService {
     }
 
     private void deleteDropRuleByIP(String ip) {
-        int exitCode = this.executaTerminal(String.format("sudo iptables -D FORWARD -i lan0 -o wlan0 -s %s -j DROP", ip),
+        int exitCode = this.executaTerminal(String.format("sudo iptables -D FORWARD -i lan0 -o wan0 -s %s -j DROP", ip),
                 LOGGER::debug);
         if (exitCode != 0) {
             throw new CogitoServiceException(String.format("Falha ao criar drop rule para IP %s", ip));
@@ -171,12 +171,12 @@ public class IptablesServiceImpl implements IptablesService {
 
             String line;
             while ((line = input.readLine()) != null) {
-                LOGGER.debug(line);
+                LOGGER.debug("  "+line);
                 linhaConsumer.accept(line);
             }
 
             int exitCode = pr.waitFor();
-            LOGGER.info("Exited with error code {}", exitCode);
+            LOGGER.info("Exit code = {}", exitCode);
             return exitCode;
         } catch (Exception e) {
             LOGGER.error("Erro ao executar comando no terminal.", e);

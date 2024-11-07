@@ -30,6 +30,7 @@ export class TelaTesteComponent implements OnInit {
 
   teste: TesteView = {
     id: 0,
+    ip: '',
     perguntas: [],
     dataCriacao: '',
     status: 'CANCELADO'
@@ -49,6 +50,7 @@ export class TelaTesteComponent implements OnInit {
       .pipe(
       map(response => ({
         id: response.id,
+        ip: response.ip,
         dataCriacao: response.dataCriacao,
         status: response.status,
         dataConclusao: response.dataConclusao,

@@ -4,6 +4,8 @@
 <div>Data Criação: {{ teste.dataCriacao }}</div>
 <div>Data Conclusão: {{ teste.dataConclusao }}</div>
 <div>Nota: {{ teste.nota }}</div>-->
+<div>Teste: <span class="id">{{ teste.id }}</span>&nbsp;&nbsp;IP: <span class="ip">{{ teste.ip }}</span></div>
+
 <div class="corrigido" *ngIf="teste.status==='CORRIGIDO'">
   <div>Nota: <span class="nota">{{ teste.nota }}</span></div>
 </div>
@@ -44,6 +46,6 @@
 <button mat-stroked-button class="nav-btn" (click)="proxima()" [disabled]="perguntaAtivaIdx>=teste.perguntas.length-1">
   Pr&oacute;xima
 </button>
-<button mat-stroked-button class="nav-btn" (click)="enviar()" [disabled]="countRespondidas()<teste.perguntas.length">
+<button *ngIf="teste.status!=='CORRIGIDO'" mat-stroked-button class="nav-btn" (click)="enviar()" [disabled]="countRespondidas()<teste.perguntas.length">
   Enviar
 </button>

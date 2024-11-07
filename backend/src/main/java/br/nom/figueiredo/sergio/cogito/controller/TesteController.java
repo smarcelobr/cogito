@@ -75,6 +75,7 @@ public class TesteController {
         testeResponse.setDataCriacao(teste.getDataCriacao());
         testeResponse.setStatus(teste.getStatus());
         testeResponse.setNota(teste.getNota());
+        testeResponse.setIp(teste.getIp());
         testeResponse.setDataConclusao(teste.getDataConclusao());
         for (TesteQuestao questao : teste.getQuestoes()) {
             TesteQuestaoDto testeQuestaoDto = convertDto(questao);

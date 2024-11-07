@@ -28,7 +28,26 @@ export class TelaTestaLatexComponent {
 
   private latexService: LatexService = inject(LatexService);
 
-  latex = new FormControl('');
+  latex = new FormControl('\\text{Qual é a área de um quadrado cujo perímetro mede $20\\,cm$ ?}\n' +
+    '\\\\\n' +
+    '\\begin{array}{rl}\n' +
+    'a) & A = 5\\,cm\n' +
+    '\\\\\n' +
+    'b) & A = 20\\,cm^2\n' +
+    '\\\\\n' +
+    'c) & A = 25\\,cm^2\n' +
+    '\\\\\n' +
+    'd) & A = 80\\,cm^2\n' +
+    '\\end{array}\\\\\n' +
+    '\\begin{array}{l}\n' +
+    '\\text{Opção Incorreta. $5\\,cm$ é o lado do quadrado. A questão solicita a }\\textbf{área}\\text{ do quadrado.}\n' +
+    '\\\\\n' +
+    '\\text{Opção Incorreta. Primeiro deve-se calcular o lado do quadrado a partir do perímetro ($p$)\\\\com a fórmula $l=\\frac{p}{4}$ e, em seguida, calcular a sua área usando a fórmula $A=l^2$.}\n' +
+    '\\\\\n' +
+    '\\text{Opção Correta. Um quadrado tem 4 lados congruentes.\\\\Se o perímetro tem $20\\,cm$, então o lado é $l=\\frac{20\\,cm}{4}=5\\,cm$ .\\\\A fórmula da área é $A=l^2$, então, $A=(5\\,cm)^2=25\\,cm^2}\n' +
+    '\\\\\n' +
+    '\\text{Opção incorreta. Primeiro deve-se calcular o lado do quadrado a partir do perímetro ($p$)\\\\com a fórmula $l=\\frac{p}{4}$ e, em seguida, calcular a sua área usando a fórmula $A=l^2$.}\n' +
+    '\\end{array}');
 
   private latexImageSubject= new BehaviorSubject<string>("data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
   latexImage = this.latexImageSubject.asObservable();
