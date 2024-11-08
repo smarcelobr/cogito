@@ -18,6 +18,7 @@ import java.util.Objects;
 @RequestMapping("/api/teste")
 public class TesteController {
 
+    public static final String REAL_IP_HEADER = "X-Real-IP";
     private final TesteService testeService;
 
     public TesteController(TesteService testeService) {
@@ -26,7 +27,13 @@ public class TesteController {
 
     @GetMapping
     public Mono<TesteResponse> get(ServerHttpRequest request) {
-        String ip = Objects.requireNonNull(request.getRemoteAddress()).getAddress().getHostAddress();
+        /* o NGINX seta o cabeçalho com o IP REAL que fez a requisição. */
+        String ip;
+        if (request.getHeaders().containsKey(REAL_IP_HEADER)) {
+            ip = request.getHeaders().getFirst(REAL_IP_HEADER);
+        } else {
+            ip = Objects.requireNonNull(request.getRemoteAddress()).getAddress().getHostAddress();
+        }
 
         return this.testeService.pegaTesteDoIP(ip)
                 .map(this::convertDto);
