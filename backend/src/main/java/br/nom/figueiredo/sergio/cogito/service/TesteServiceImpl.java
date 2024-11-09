@@ -20,6 +20,8 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.util.Objects.nonNull;
+
 @Service
 public class TesteServiceImpl implements TesteService {
 
@@ -44,18 +46,29 @@ public class TesteServiceImpl implements TesteService {
     @Transactional
     @Override
     public Mono<Teste> pegaTesteDoIP(String ip) {
-        return testeRepository
-                .findOneByIpAndStatusInOrderByDataCriacao(ip, List.of(TesteStatus.NOVO, TesteStatus.EM_ANDAMENTO))
+        return testeRepository /* verifica se há um teste já criado e ainda não concluído*/
+                .findByIpAndStatusInOrderByDataCriacao(ip, List.of(TesteStatus.NOVO, TesteStatus.EM_ANDAMENTO))
+                .next()
+                /* se não houver, pega um teste já concluído há menos de 10 minutos. Só pode fazer um
+                * novo teste a cada 10 minutos e é bom para revisar as respostas. */
+                .switchIfEmpty(testeRepository.findByIpAndStatusInOrderByDataConclusaoDesc(ip, List.of(TesteStatus.CORRIGIDO))
+                        .filter(teste -> nonNull(teste.getDataConclusao()) &&
+                                         LocalDateTime.now().minusMinutes(10).isBefore(teste.getDataConclusao()) )
+                        .next()
+                )
                 .delayUntil(teste -> this.testeQuestaoRepository.findAllByTesteIdOrderById(teste.getId())
+                        .delayUntil(testeQuestao -> this.perguntaService.getPerguntaCompleta(testeQuestao.getPerguntaId())
+                                .doOnNext(testeQuestao::setPergunta))
                         .collectList()
                         .doOnNext(teste::withQuestoes))
+                /* se não testes em andamento e nem testes concluídos a mais de dez minutos, cria um novo. */
                 .switchIfEmpty(this.criarTeste(ip));
     }
 
     @Transactional
     @Override
     public Mono<Teste> criarTeste(String ip) {
-        return this.perguntaService.getRandom(ip, 214, 5)
+        return this.perguntaService.getRandom(ip, 5)
                 .map(this::criaQuestao)
                 .collectList()
                 .map(questoes -> {

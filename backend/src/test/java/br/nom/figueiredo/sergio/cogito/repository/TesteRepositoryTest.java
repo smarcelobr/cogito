@@ -14,8 +14,6 @@ import reactor.test.StepVerifier;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -28,7 +26,8 @@ class TesteRepositoryTest {
 
     @Test
     public void testQuery() {
-        Mono<Teste> source = testeRepository.findOneByIpAndStatusInOrderByDataCriacao("192.162.2.10", List.of(TesteStatus.NOVO, TesteStatus.EM_ANDAMENTO));
+        Mono<Teste> source = testeRepository.findByIpAndStatusInOrderByDataCriacao("192.162.2.10", List.of(TesteStatus.NOVO, TesteStatus.EM_ANDAMENTO))
+                .next();
 
         StepVerifier
                 .create(source)

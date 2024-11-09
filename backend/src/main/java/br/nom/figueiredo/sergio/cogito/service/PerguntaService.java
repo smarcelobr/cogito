@@ -6,6 +6,6 @@ import reactor.core.publisher.Mono;
 
 public interface PerguntaService {
 
-    Flux<Pergunta> getRandom(String ip, int randomSeed, int quantidade);
+    Flux<Pergunta> getRandom(String ip, int quantidade);
     Mono<Pergunta> getPerguntaCompleta(Long id);
 }

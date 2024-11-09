@@ -64,7 +64,7 @@ export class TelaTesteComponent implements OnInit {
             disciplina: '',
             base64PNG: '',
             correto: testeQuestaoDto.correto,
-            explicacao: testeQuestaoDto.explicacao
+            explicacao: testeQuestaoDto.explicacao?`data:image/png;base64, ${testeQuestaoDto.explicacao}`:null
           } as QuestaoView)
         ),
       })),

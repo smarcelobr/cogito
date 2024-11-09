@@ -22,8 +22,8 @@ public class PerguntaServiceImpl implements PerguntaService {
     }
 
     @Override
-    public Flux<Pergunta> getRandom(String ip, int randomSeed, int quantidade) {
-        return this.perguntaRepository.findRandom(ip, randomSeed, Pageable.ofSize(5));
+    public Flux<Pergunta> getRandom(String ip, int quantidade) {
+        return this.perguntaRepository.findRandom(ip, Pageable.ofSize(quantidade));
     }
 
     @Override

@@ -8,6 +8,7 @@
 
 <div class="corrigido" *ngIf="teste.status==='CORRIGIDO'">
   <div>Nota: <span class="nota">{{ teste.nota }}</span></div>
+  <div>Data Conclusão: {{ teste.dataConclusao }}</div>
 </div>
 
 <mat-progress-bar mode="determinate" value="{{countRespondidas()*100/teste.perguntas.length}}"></mat-progress-bar>
