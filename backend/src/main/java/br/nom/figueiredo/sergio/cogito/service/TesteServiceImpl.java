@@ -55,7 +55,7 @@ public class TesteServiceImpl implements TesteService {
     @Transactional
     @Override
     public Mono<Teste> criarTeste(String ip) {
-        return this.perguntaService.getPerguntas(5)
+        return this.perguntaService.getRandom(ip, 214, 5)
                 .map(this::criaQuestao)
                 .collectList()
                 .map(questoes -> {
