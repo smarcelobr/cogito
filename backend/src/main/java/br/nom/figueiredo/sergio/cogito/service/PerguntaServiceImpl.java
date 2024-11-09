@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Random;
+
 @Service
 public class PerguntaServiceImpl implements PerguntaService {
     private final PerguntaRepository perguntaRepository;
@@ -27,13 +31,16 @@ public class PerguntaServiceImpl implements PerguntaService {
     }
 
     @Override
-    public Mono<Pergunta> getPerguntaCompleta(Long id) {
+    public Mono<Pergunta> getPerguntaCompleta(Long id, Long rndSeed) {
+        Objects.requireNonNull(id);
+        Random random = new Random(Objects.requireNonNullElse(rndSeed, id));
         return this.perguntaRepository.findById(id)
                 .switchIfEmpty(Mono.error(new CogitoServiceException(String.format("Pergunta %d não encontrada", id))))
                 .delayUntil(pergunta -> opcaoRepository
                         .findAllByPerguntaId(pergunta.getId())
                         .switchIfEmpty(Mono.error(new CogitoServiceException(String.format("Pergunta %d não tem opções cadastradas", pergunta.getId()))))
                         .collectList()
+                        .doOnNext((opcoes -> Collections.shuffle(opcoes, random)))
                         .doOnNext(pergunta::withOpcoes)
                         .and(gabaritoRepository
                                 .findAllByPerguntaId(pergunta.getId())

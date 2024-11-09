@@ -71,7 +71,7 @@ export class TelaTesteComponent implements OnInit {
       switchMap(testeView => from(testeView.perguntas)
         .pipe(
           concatMap(questao =>
-            this.perguntaService.get(questao.perguntaId).pipe(
+            this.perguntaService.get(questao.perguntaId, questao.id).pipe(
               tap(perguntaImgResponse => this.combina(questao, perguntaImgResponse))
             )),
           map(questao => testeView)
@@ -116,6 +116,10 @@ export class TelaTesteComponent implements OnInit {
     if (this.perguntaAtivaIdx >= this.teste.perguntas.length) {
       this.perguntaAtivaIdx = this.teste.perguntas.length - 1;
     }
+  }
+
+  gotoPergunta(index: number) {
+    this.perguntaAtivaIdx = index;
   }
 
   marcar_opcao(pergunta: QuestaoView, opcao_clicada: OpcaoView) {

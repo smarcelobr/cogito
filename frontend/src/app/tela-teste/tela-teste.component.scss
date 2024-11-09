@@ -1,3 +1,7 @@
+@use '@angular/material' as mat;
+
+$theme: mat.define-theme();
+
 .questao {
   display: flex;
   flex-direction: row;
@@ -63,4 +67,12 @@
 .explicacao {
   border-top: 2px dotted dimgray;
   margin-top: 1em;
+}
+
+.nav-btn {
+  @include mat.button-color($theme, $color-variant: secondary);
+}
+
+.nav-btn.opcao-marcada {
+  @include mat.button-color($theme, $color-variant: primary);
 }

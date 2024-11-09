@@ -23,6 +23,6 @@ export class PerguntaService {
 
   constructor(private http: HttpClient) { }
 
-  get(id: number): Observable<PerguntaImgResponse> {
-    return this.http.get<PerguntaImgResponse>(`api/pergunta?id=${id}`);
+  get(id: number, rndSeed:number): Observable<PerguntaImgResponse> {
+    return this.http.get<PerguntaImgResponse>(`api/pergunta?id=${id}&rndSeed=${rndSeed}`);
   }}

@@ -44,12 +44,13 @@
   <mat-divider></mat-divider>
 </div>
 <div *ngIf="teste.status!=='CORRIGIDO'">
-  <button mat-stroked-button class="nav-btn" (click)="anterior()" [disabled]="perguntaAtivaIdx<=0">Anterior</button>
-  <button mat-stroked-button class="nav-btn" (click)="proxima()"
+  <button mat-stroked-button class="nav-btn opcao-marcada" (click)="anterior()" [disabled]="perguntaAtivaIdx<=0">Anterior</button>
+  <button mat-stroked-button class="nav-btn opcao-marcada" (click)="proxima()"
           [disabled]="perguntaAtivaIdx>=teste.perguntas.length-1">
     Pr&oacute;xima
   </button>
-  <button mat-stroked-button class="nav-btn" (click)="enviar()" [disabled]="countRespondidas()<teste.perguntas.length">
+  <button *ngFor="let pergunta of teste.perguntas; let idx=index" mat-stroked-button class="nav-btn" (click)="gotoPergunta(idx)" [class.opcao-marcada]="pergunta.opcaoId">{{idx+1}}</button>
+  <button mat-stroked-button class="nav-btn opcao-marcada" (click)="enviar()" [disabled]="countRespondidas()<teste.perguntas.length">
     Enviar
   </button>
 </div>

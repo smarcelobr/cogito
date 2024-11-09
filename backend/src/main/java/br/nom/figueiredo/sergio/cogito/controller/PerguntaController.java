@@ -38,9 +38,11 @@ public class PerguntaController {
     }
 
     @GetMapping()
-    public Mono<ResponseEntity<PerguntaImgResponse>> getPNG(@RequestParam("id") Long perguntaId) {
+    public Mono<ResponseEntity<PerguntaImgResponse>> getPNG(@RequestParam("id") Long perguntaId,
+                                                            @RequestParam(value = "rndSeed", required = false, defaultValue = "12")
+                                                            Long optRndSeed) {
 
-        return this.perguntaService.getPerguntaCompleta(perguntaId)
+        return this.perguntaService.getPerguntaCompleta(perguntaId, optRndSeed)
                 .map(this::criaIMG)
                 .map(perguntaImgResponse -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
@@ -66,9 +68,11 @@ public class PerguntaController {
     }
 
     @GetMapping(headers = "accept=image/png")
-    public Mono<ResponseEntity<DataBuffer>> getImgPergunta(@RequestParam("id") Long perguntaId) {
+    public Mono<ResponseEntity<DataBuffer>> getImgPergunta(@RequestParam("id") Long perguntaId,
+                                                           @RequestParam(value = "rndSeed", required = false, defaultValue = "12")
+                                                           Long optRndSeed) {
 
-        return perguntaService.getPerguntaCompleta(perguntaId)
+        return perguntaService.getPerguntaCompleta(perguntaId, optRndSeed)
                 .map(this::criaPNG)
                 .map(imageData -> ResponseEntity.ok()
                         .contentType(MediaType.IMAGE_PNG)
