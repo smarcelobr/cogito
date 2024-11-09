@@ -13,7 +13,7 @@
 
 <mat-progress-bar mode="determinate" value="{{countRespondidas()*100/teste.perguntas.length}}"></mat-progress-bar>
 <div *ngFor="let pergunta of teste.perguntas; let idx=index">
-  <div *ngIf="idx===perguntaAtivaIdx" [id]="'questao_'+pergunta.id" class="questao">
+  <div *ngIf="idx===perguntaAtivaIdx || teste.status==='CORRIGIDO'" [id]="'questao_'+pergunta.id" class="questao">
     <div class="pergunta">
       <b>{{ idx + 1 }}) [{{ pergunta.disciplina }}]</b>
       <div>
@@ -41,12 +41,15 @@
       </div>
     </div>
   </div>
+  <mat-divider></mat-divider>
 </div>
-<mat-divider></mat-divider>
-<button mat-stroked-button class="nav-btn" (click)="anterior()" [disabled]="perguntaAtivaIdx<=0">Anterior</button>
-<button mat-stroked-button class="nav-btn" (click)="proxima()" [disabled]="perguntaAtivaIdx>=teste.perguntas.length-1">
-  Pr&oacute;xima
-</button>
-<button *ngIf="teste.status!=='CORRIGIDO'" mat-stroked-button class="nav-btn" (click)="enviar()" [disabled]="countRespondidas()<teste.perguntas.length">
-  Enviar
-</button>
+<div *ngIf="teste.status!=='CORRIGIDO'">
+  <button mat-stroked-button class="nav-btn" (click)="anterior()" [disabled]="perguntaAtivaIdx<=0">Anterior</button>
+  <button mat-stroked-button class="nav-btn" (click)="proxima()"
+          [disabled]="perguntaAtivaIdx>=teste.perguntas.length-1">
+    Pr&oacute;xima
+  </button>
+  <button mat-stroked-button class="nav-btn" (click)="enviar()" [disabled]="countRespondidas()<teste.perguntas.length">
+    Enviar
+  </button>
+</div>
