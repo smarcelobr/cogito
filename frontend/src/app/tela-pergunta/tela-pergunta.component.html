@@ -1,0 +1,59 @@
+Pergunta: {{ perguntaImg.id }}
+<div id="tela-pergunta">
+  <div id="form-tile">
+    <form [formGroup]="perguntaForm">
+      <mat-form-field>
+        <mat-label>Enunciado</mat-label>
+        <textarea matInput formControlName="enunciado" rows="4" cols="36"></textarea>
+      </mat-form-field>
+      <div class="opcaoForm">
+        <mat-checkbox formControlName="opcaoACorreto"></mat-checkbox>
+        <mat-form-field>
+          <mat-label>Opção A</mat-label>
+          <textarea matInput formControlName="opcaoA" rows="4" cols="36"></textarea>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Explicação Opção A</mat-label>
+          <textarea matInput formControlName="opcaoAExplicacao" rows="4" cols="36"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="opcaoForm">
+        <mat-checkbox formControlName="opcaoBCorreto"></mat-checkbox>
+        <mat-form-field>
+          <mat-label>Opção B</mat-label>
+          <textarea matInput formControlName="opcaoB" rows="4" cols="36"></textarea>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Explicação Opção B</mat-label>
+          <textarea matInput formControlName="opcaoBExplicacao" rows="4" cols="36"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="opcaoForm">
+        <mat-checkbox formControlName="opcaoCCorreto"></mat-checkbox>
+        <mat-form-field>
+          <mat-label>Opção C</mat-label>
+          <textarea matInput formControlName="opcaoC" rows="4" cols="36"></textarea>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Explicação Opção C</mat-label>
+          <textarea matInput formControlName="opcaoCExplicacao" rows="4" cols="36"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="opcaoForm">
+        <mat-checkbox formControlName="opcaoDCorreto"></mat-checkbox>
+        <mat-form-field>
+          <mat-label>Opção D</mat-label>
+          <textarea matInput formControlName="opcaoD" rows="4" cols="36"></textarea>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Explicação Opção D</mat-label>
+          <textarea matInput formControlName="opcaoDExplicacao" rows="4" cols="36"></textarea>
+        </mat-form-field>
+      </div>
+      <button mat-flat-button (click)="preview()">Preview</button>
+    </form>
+  </div>
+  <div id="preview-tile">
+    <app-pergunta [pergunta]="perguntaImg" [rndSeed]="100" [numPergunta]="1"/>
+  </div>
+</div>

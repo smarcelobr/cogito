@@ -71,7 +71,7 @@ export class TelaTesteComponent implements OnInit {
       switchMap(testeView => from(testeView.perguntas)
         .pipe(
           concatMap(questao =>
-            this.perguntaService.get(questao.perguntaId, questao.id).pipe(
+            this.perguntaService.getImg(questao.perguntaId, questao.id).pipe(
               tap(perguntaImgResponse => this.combina(questao, perguntaImgResponse))
             )),
           map(questao => testeView)

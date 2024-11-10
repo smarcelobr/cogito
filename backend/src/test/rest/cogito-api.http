@@ -1,12 +1,18 @@
-### Download da imagem da pergunta
+### le dados da pergunta
 # @no-log
-GET /api/pergunta?id=101
+GET /api/pergunta/101
 Host: {{cogitoURL}}
 Accept: application/json
 
-### Download da imagem da pergunta
+### Download da imagem da pergunta (JSON)
 # @no-log
-GET /api/pergunta?id=103
+GET /api/pergunta/101/img
+Host: {{cogitoURL}}
+Accept: application/json
+
+### Download da imagem da pergunta (PNG)
+# @no-log
+GET /api/pergunta/103/img
 Host: {{cogitoURL}}
 Accept: image/png
 

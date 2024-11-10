@@ -1,0 +1,12 @@
+div#tela-pergunta {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+div#form-tile form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

@@ -39,7 +39,7 @@ public class MaquinaConectManager {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedRate = 3, timeUnit = TimeUnit.MINUTES)
     public void confereConexoes() {
         LOGGER.trace("conferencia periódica...");
         this.applicationEventPublisher.publishEvent(new ConfereConexoesEvent(this));

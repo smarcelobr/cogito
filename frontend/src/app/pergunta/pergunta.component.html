@@ -1,0 +1,27 @@
+<div class="pergunta">
+  <b>{{ numPergunta }}) [{{ _pergunta.disciplina }}]</b>
+  <div>
+    <img [src]="toImgSrc(_pergunta.base64PNG)" alt="pergunta"/>
+  </div>
+  <div *ngFor="let opcao of _pergunta.opcoes" [id]="'opcao_'+opcao.id" class="opcao"
+       [class.opcao-marcada]="opcaoId===opcao.id"
+       [class.opcao-certa]="opcaoId===opcao.id && correta"
+       [class.opcao-errada]="opcaoId===opcao.id && !correta">
+    <b (click)="marcar_opcao(opcao)">{{ opcao.letra }})</b>
+    <div>
+      <img [src]="toImgSrc(opcao.base64PNG)" alt="opcao"/>
+    </div>
+  </div>
+  <div *ngIf="explicacao" class="explicacao">
+    <img [src]="toImgSrc(explicacao)" alt="explicacao"/>
+  </div>
+</div>
+<!--<div *ngIf="opcaoId" class="resultado">
+  <div *ngIf="correta">
+    <mat-icon color="primary">check_circle</mat-icon>
+  </div>
+  <div *ngIf="!correta">
+    <mat-icon color="warn">error</mat-icon>
+  </div>
+</div>-->
+

@@ -1,0 +1,49 @@
+.pergunta {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 1rem;
+}
+
+.opcao {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.opcao.opcao-marcada.opcao-certa {
+  padding: 3px;
+  border: 2px dashed green;
+  border-radius: 3px;
+}
+
+.opcao.opcao-marcada.opcao-errada {
+  padding: 3px;
+  border: 2px dashed red;
+  border-radius: 3px;
+}
+
+.opcao.opcao-marcada b {
+  border: 2px solid royalblue;
+  margin: 0;
+}
+
+.opcao.opcao-marcada b:hover {
+  border: 2px dashed royalblue;
+  margin: 0;
+}
+
+.opcao b {
+  padding: 4px;
+  border-radius: 12px;
+  margin: 2px;
+}
+
+.opcao b:hover {
+  border: 2px solid lightskyblue;
+  margin: 0;
+}
+
+.explicacao {
+  border-top: 2px dotted dimgray;
+  margin-top: 1em;
+}

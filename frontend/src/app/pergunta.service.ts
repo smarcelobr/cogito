@@ -1,19 +1,34 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {LatexRequest, LatexResponse} from "./latex.service";
 
 export interface OpcaoImg {
-  id: number
-  letra: string
-  base64PNG: string
+  id: number;
+  letra: string;
+  base64PNG: string;
+  correta: boolean;
+  explicacaoBase64PNG: string;
 }
 
 export interface PerguntaImgResponse {
-  id: number
-  disciplina: string
-  base64PNG: string
-  opcoes: OpcaoImg[]
+  id: number;
+  disciplina: string;
+  base64PNG: string;
+  opcoes: OpcaoImg[];
+}
+
+export interface OpcaoDto {
+  id: number;
+  alternativaLatex: string;
+  correta: boolean;
+  explicacaoLatex: string;
+}
+
+export interface PerguntaDto {
+  id: number;
+  disciplina: string;
+  enunciadoLatex: string;
+  opcoes: OpcaoDto[];
 }
 
 @Injectable({
@@ -23,6 +38,11 @@ export class PerguntaService {
 
   constructor(private http: HttpClient) { }
 
-  get(id: number, rndSeed:number): Observable<PerguntaImgResponse> {
-    return this.http.get<PerguntaImgResponse>(`api/pergunta?id=${id}&rndSeed=${rndSeed}`);
-  }}
+  getImg(id: number, rndSeed:number): Observable<PerguntaImgResponse> {
+    return this.http.get<PerguntaImgResponse>(`api/pergunta/${id}/img?rndSeed=${rndSeed}`);
+  }
+
+  get(id: number) {
+    return this.http.get<PerguntaDto>(`api/pergunta/${id}`);
+  }
+}
