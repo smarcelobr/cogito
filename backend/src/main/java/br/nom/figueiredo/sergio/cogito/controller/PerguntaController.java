@@ -49,6 +49,46 @@ public class PerguntaController {
                         .body(pergunta));
     }
 
+    @PutMapping("{id}")
+    public Mono<ResponseEntity<PerguntaDto>> put(@PathVariable("id") Long perguntaId,
+                                                 @RequestBody PerguntaDto perguntaDto) {
+
+        return this.perguntaService.getPerguntaCompleta(perguntaId, perguntaId)
+                .doOnNext(p -> {
+                    /* atualiza registro recuperado com os dados que vieram */
+                    p.setDisciplina(perguntaDto.getDisciplina());
+                    p.setQuestao(perguntaDto.getEnunciadoLatex());
+                    for (OpcaoDto opcDto : perguntaDto.getOpcoes()) {
+                        p.getOpcoes().stream()
+                                .filter(opc -> opc.getId().equals(opcDto.getId()))
+                                .findFirst()
+                                .ifPresent(opcao -> opcao.setAlternativa(opcDto.getAlternativaLatex()));
+                        p.getGabarito().stream()
+                                .filter(opc -> opc.getOpcaoId().equals(opcDto.getId()))
+                                .findFirst()
+                                .ifPresent(gabarito -> {
+                                    gabarito.setCorreta(opcDto.getCorreta());
+                                    gabarito.setExplicacao(opcDto.getExplicacaoLatex());
+                                });
+                    }
+                })
+                .flatMap(this.perguntaService::savePerguntaCompleta)
+                .map(this::convertDto)
+                .map(pergunta -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(pergunta));
+    }
+
+    @PostMapping("clone")
+    public Mono<ResponseEntity<PerguntaDto>> put(@RequestBody PerguntaCloneRequest cloneRequest) {
+
+        return this.perguntaService.clonar(cloneRequest.getOrigem())
+                .map(this::convertDto)
+                .map(pergunta -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(pergunta));
+    }
+
     @GetMapping("{id}/img")
     public Mono<ResponseEntity<PerguntaImgResponse>> getPNG(@PathVariable("id") Long perguntaId,
                                                             @RequestParam(value = "rndSeed", required = false, defaultValue = "12")
@@ -86,7 +126,7 @@ public class PerguntaController {
         return perguntaImgResponse;
     }
 
-    @GetMapping(value ="{id}/img", headers = "accept=image/png")
+    @GetMapping(value = "{id}/img", headers = "accept=image/png")
     public Mono<ResponseEntity<DataBuffer>> getImgPergunta(@PathVariable("id") Long perguntaId,
                                                            @RequestParam(value = "rndSeed", required = false, defaultValue = "12")
                                                            Long optRndSeed) {
@@ -148,11 +188,11 @@ d) &\text{nenhuma das alternativas acima.}
         dto.setId(pergunta.getId());
         dto.setEnunciadoLatex(pergunta.getQuestao());
         dto.setDisciplina(pergunta.getDisciplina());
-        List<OpcaoDto > opcaoDtoList = new ArrayList<>(pergunta.getOpcoes().size());
+        List<OpcaoDto> opcaoDtoList = new ArrayList<>(pergunta.getOpcoes().size());
         dto.setOpcoes(opcaoDtoList);
         for (Opcao opcao : pergunta.getOpcoes()) {
             Optional<Gabarito> gabarito = pergunta.getGabarito().stream()
-                    .filter((g)-> opcao.getId().equals(g.getOpcaoId()))
+                    .filter((g) -> opcao.getId().equals(g.getOpcaoId()))
                     .findFirst();
             opcaoDtoList.add(convertDto(opcao, gabarito));
         }

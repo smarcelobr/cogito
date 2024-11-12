@@ -6,6 +6,7 @@ import br.nom.figueiredo.sergio.cogito.service.IptablesService;
 import br.nom.figueiredo.sergio.cogito.service.MaquinaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,11 +29,14 @@ public class MaquinaConectManager {
     private final IptablesService iptablesService;
     private final MaquinaService maquinaService;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final Boolean confereConexoesEnabled;
 
-    public MaquinaConectManager(TesteRepository testeRepository,
+    public MaquinaConectManager(@Value("#{new Boolean('${confereConexoes.enabled}')}") Boolean confereConexoesEnabled,
+            TesteRepository testeRepository,
                                 IptablesService iptablesService,
                                 MaquinaService maquinaService,
                                 ApplicationEventPublisher applicationEventPublisher) {
+        this.confereConexoesEnabled = confereConexoesEnabled;
         this.testeRepository = testeRepository;
         this.iptablesService = iptablesService;
         this.maquinaService = maquinaService;
@@ -48,6 +52,10 @@ public class MaquinaConectManager {
     @EventListener
     public void confereConexoes(ConfereConexoesEvent cse) {
         LOGGER.debug("conferindo conexões...");
+        if (!this.confereConexoesEnabled) {
+            LOGGER.debug("Desabilitado!");
+            return;
+        }
 
         maquinaService.findAllMaquinas()
                 /* carrega os testes na validade */

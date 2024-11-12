@@ -1,17 +1,23 @@
 package br.nom.figueiredo.sergio.cogito.service;
 
+import br.nom.figueiredo.sergio.cogito.controller.PerguntaController;
+import br.nom.figueiredo.sergio.cogito.model.Gabarito;
+import br.nom.figueiredo.sergio.cogito.model.Opcao;
+import br.nom.figueiredo.sergio.cogito.model.OpcaoGabarito;
 import br.nom.figueiredo.sergio.cogito.model.Pergunta;
 import br.nom.figueiredo.sergio.cogito.repository.GabaritoRepository;
 import br.nom.figueiredo.sergio.cogito.repository.OpcaoRepository;
 import br.nom.figueiredo.sergio.cogito.repository.PerguntaRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static java.util.Objects.nonNull;
 
 @Service
 public class PerguntaServiceImpl implements PerguntaService {
@@ -49,5 +55,67 @@ public class PerguntaServiceImpl implements PerguntaService {
                                 .doOnNext(pergunta::withGabaritos)
                         )
                 );
+    }
+
+    @Override
+    public Mono<Pergunta> savePerguntaCompleta(Pergunta perguntaCompleto) {
+        return perguntaRepository.save(perguntaCompleto)
+                .delayUntil(p -> Flux.fromIterable(perguntaCompleto.getOpcoes())
+                        .doOnNext(opcao -> opcao.setPerguntaId(p.getId()))
+                        .flatMap(this.opcaoRepository::save)
+                        .collectList()
+                        .doOnNext(p::withOpcoes))
+                .delayUntil(p -> Flux.fromIterable(perguntaCompleto.getGabarito())
+                        .doOnNext(gabarito -> gabarito.setPerguntaId(p.getId()))
+                        .flatMap(this.gabaritoRepository::save)
+                        .collectList()
+                        .doOnNext(p::withGabaritos));
+    }
+
+    @Override
+    @Transactional
+    public Mono<Pergunta> clonar(Long perguntaIdOrigem) {
+
+        return this.getPerguntaCompleta(perguntaIdOrigem, null)
+                .doOnNext(clone -> clone.setId(null))
+                .flatMap(clone -> perguntaRepository.save(clone)
+                        .delayUntil(salva ->
+                                Flux.fromIterable(clone.getOpcoes())
+                                        .map(opcao -> {
+                                            // acha o gabarito correspondente a esta opcao:
+                                            Gabarito gabarito = clone.getGabarito().stream()
+                                                    .filter(g -> opcao.getId().equals(g.getOpcaoId()) && opcao.getPerguntaId().equals(g.getPerguntaId()))
+                                                    .findFirst().orElse(null);
+
+                                            /* atualiza o id da pergunta na opcao e no gabarito */
+                                            opcao.setPerguntaId(salva.getId());
+                                            opcao.setId(null);
+                                            if (nonNull(gabarito)) {
+                                                gabarito.setId(null);
+                                                gabarito.setPerguntaId(salva.getId());
+                                                gabarito.setOpcaoId(null);
+                                            }
+                                            return new OpcaoGabarito(opcao, gabarito);
+                                        })
+                                        .flatMap(og -> this.opcaoRepository.save(og.opcao())
+                                                .map(opcaoSalva -> {
+                                                    /* atualiza o id da opcao no gabarito associado. */
+                                                    og.gabarito().setOpcaoId(opcaoSalva.getId());
+                                                    return new OpcaoGabarito(opcaoSalva, og.gabarito());
+                                                })
+                                        )
+                                        .flatMap(og -> this.gabaritoRepository.save(og.gabarito())
+                                                .map(gabaritoSalvo-> new OpcaoGabarito(og.opcao(), gabaritoSalvo))
+                                        )
+                                        .collectList()
+                                        .doOnNext(ogList -> {
+                                            List<Opcao> opcoes = ogList.stream().map(OpcaoGabarito::opcao).toList();
+                                            List<Gabarito> gabaritos = ogList.stream().map(OpcaoGabarito::gabarito).toList();
+                                            salva.withOpcoes(opcoes);
+                                            salva.withGabaritos(gabaritos);
+                                        })
+                        )
+                );
+
     }
 }

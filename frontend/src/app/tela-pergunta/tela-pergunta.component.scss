@@ -5,8 +5,20 @@ div#tela-pergunta {
   gap: 1rem;
 }
 
+div#form-tile {
+  width: 70%;
+}
+
 div#form-tile form {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   gap: 1rem;
 }
+
+div#form-tile div.opcaoForm {
+  display: inline-flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+

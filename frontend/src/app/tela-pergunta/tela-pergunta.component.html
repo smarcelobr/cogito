@@ -3,6 +3,10 @@ Pergunta: {{ perguntaImg.id }}
   <div id="form-tile">
     <form [formGroup]="perguntaForm">
       <mat-form-field>
+        <mat-label>Disciplina</mat-label>
+        <input matInput formControlName="disciplinaInput" />
+      </mat-form-field>
+      <mat-form-field>
         <mat-label>Enunciado</mat-label>
         <textarea matInput formControlName="enunciado" rows="4" cols="36"></textarea>
       </mat-form-field>
@@ -50,7 +54,8 @@ Pergunta: {{ perguntaImg.id }}
           <textarea matInput formControlName="opcaoDExplicacao" rows="4" cols="36"></textarea>
         </mat-form-field>
       </div>
-      <button mat-flat-button (click)="preview()">Preview</button>
+      <button mat-flat-button (click)="atualizar()">Atualizar</button>
+      <button mat-stroked-button (click)="clonar()">Clonar</button>
     </form>
   </div>
   <div id="preview-tile">

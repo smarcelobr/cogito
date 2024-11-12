@@ -31,6 +31,12 @@ export interface PerguntaDto {
   opcoes: OpcaoDto[];
 }
 
+export interface PerguntaUpdateRequest {
+  disciplina: string;
+  enunciadoLatex: string;
+  opcoes: OpcaoDto[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -44,5 +50,15 @@ export class PerguntaService {
 
   get(id: number) {
     return this.http.get<PerguntaDto>(`api/pergunta/${id}`);
+  }
+
+  put(id: number, perguntaAlterada: PerguntaUpdateRequest) {
+    return this.http.put<PerguntaDto>(`api/pergunta/${id}`, perguntaAlterada);
+  }
+
+  clone(id: number) {
+    return this.http.post<PerguntaDto>(`api/pergunta/clone`, {
+      origem: id
+    });
   }
 }

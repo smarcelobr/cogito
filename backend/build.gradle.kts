@@ -86,4 +86,6 @@ flyway {
 	password = project.extra["FLYWAY_PASSWORD"] as String
 	connectRetries = 10
 	encoding = "UTF-8"
+
+
 }

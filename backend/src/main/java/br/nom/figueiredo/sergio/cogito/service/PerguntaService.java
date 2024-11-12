@@ -15,4 +15,8 @@ public interface PerguntaService {
      * @return pergunta e opções carregadas.
      */
     Mono<Pergunta> getPerguntaCompleta(Long id, Long rndSeed);
+
+    Mono<Pergunta> savePerguntaCompleta(Pergunta pergunta);
+
+    Mono<Pergunta> clonar(Long perguntaIdOrigem);
 }

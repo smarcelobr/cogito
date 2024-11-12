@@ -1,10 +1,22 @@
 package br.nom.figueiredo.sergio.cogito.model;
 
+import org.springframework.data.annotation.Id;
+
 public class Gabarito {
+    @Id
+    private Long id;
     private Long perguntaId;
     private Long opcaoId;
     private Boolean correta;
     private String explicacao;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getPerguntaId() {
         return perguntaId;
