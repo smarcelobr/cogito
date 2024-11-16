@@ -43,7 +43,7 @@ public class CogitoSecurityConfig {
     public MapReactiveUserDetailsService userDetailsService() {
         UserDetails user = User
                 .withUsername("user")
-                .password("{noop}123456")
+                .password("{noop}c0g1t0")
                 .roles("USER")
                 .build();
         return new MapReactiveUserDetailsService(user);
