@@ -16,6 +16,13 @@ Responda corretamente às questões para ganhar cotas de acesso à internet.
     #!/bin/bash
     java -Dlogging.level.br.nom.figueiredo.sergio.cogito=TRACE -jar cogito-0.0.1-SNAPSHOT.jar
 
+## Páginas:
+
+- [Realização do Teste](http://teste/)
+- [Clone de Perguntas - Local:4200](http://localhost:4200/pergunta?perguntaId=101)
+- [Clone de Perguntas - PRD](http://teste/pergunta?perguntaId=102)
+- [Latex](http://teste/latex)
+
 ## DATABASE - MariaDB
 
 ### Criando o Database oficial e de testes
