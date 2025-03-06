@@ -1,9 +1,7 @@
 package br.nom.figueiredo.sergio.cogito;
 
-import br.nom.figueiredo.sergio.cogito.controller.dto.LatexResponse;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
-import org.springframework.http.ResponseEntity;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

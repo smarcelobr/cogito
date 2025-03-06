@@ -47,7 +47,15 @@ export class TelaTestaLatexComponent {
     '\\text{Opção Correta. Um quadrado tem 4 lados congruentes.\\\\Se o perímetro tem $20\\,cm$, então o lado é $l=\\frac{20\\,cm}{4}=5\\,cm$ .\\\\A fórmula da área é $A=l^2$, então, $A=(5\\,cm)^2=25\\,cm^2}\n' +
     '\\\\\n' +
     '\\text{Opção incorreta. Primeiro deve-se calcular o lado do quadrado a partir do perímetro ($p$)\\\\com a fórmula $l=\\frac{p}{4}$ e, em seguida, calcular a sua área usando a fórmula $A=l^2$.}\n' +
-    '\\end{array}');
+    '\\end{array}' +
+    '\\\\\n' +
+    '\\begin{tabular}{ |c|c|c|c|c|c|c| } \n' +
+    ' \\hline\n' +
+    ' km & hm & dam & m & dm & cm & mm \\\\ \n' +
+    ' \\hline\n' +
+    '0 & 0 &  0 & 3 & 8 & 8 & 0 \\\\ \n' +
+    ' \\hline\n' +
+    '\\end{tabular}\n');
 
   private latexImageSubject= new BehaviorSubject<string>("data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
   latexImage = this.latexImageSubject.asObservable();
