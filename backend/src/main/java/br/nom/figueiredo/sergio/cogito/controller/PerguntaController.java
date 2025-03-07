@@ -40,9 +40,10 @@ public class PerguntaController {
     }
 
     @GetMapping("{id}")
-    public Mono<ResponseEntity<PerguntaDto>> get(@PathVariable("id") Long perguntaId) {
-
-        return this.perguntaService.getPerguntaCompleta(perguntaId, perguntaId)
+    public Mono<ResponseEntity<PerguntaDto>> get(@PathVariable("id") Long perguntaId,
+                                                 @RequestParam(required = false) Long seed) {
+        seed = Optional.ofNullable(seed).orElse(perguntaId);
+        return this.perguntaService.getPerguntaCompleta(perguntaId, seed)
                 .map(this::convertDto)
                 .map(pergunta -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
@@ -51,9 +52,10 @@ public class PerguntaController {
 
     @PutMapping("{id}")
     public Mono<ResponseEntity<PerguntaDto>> put(@PathVariable("id") Long perguntaId,
-                                                 @RequestBody PerguntaDto perguntaDto) {
-
-        return this.perguntaService.getPerguntaCompleta(perguntaId, perguntaId)
+                                                 @RequestBody PerguntaDto perguntaDto,
+                                                 @RequestParam(required = false) Long seed) {
+        seed = Optional.ofNullable(seed).orElse(perguntaId);
+        return this.perguntaService.getPerguntaCompleta(perguntaId, seed)
                 .doOnNext(p -> {
                     /* atualiza registro recuperado com os dados que vieram */
                     p.setDisciplina(perguntaDto.getDisciplina());
@@ -91,7 +93,7 @@ public class PerguntaController {
 
     @GetMapping("{id}/img")
     public Mono<ResponseEntity<PerguntaImgResponse>> getPNG(@PathVariable("id") Long perguntaId,
-                                                            @RequestParam(value = "rndSeed", required = false, defaultValue = "12")
+                                                            @RequestParam(value = "rndSeed", required = false)
                                                             Long optRndSeed) {
 
         return this.perguntaService.getPerguntaCompleta(perguntaId, optRndSeed)
@@ -128,7 +130,7 @@ public class PerguntaController {
 
     @GetMapping(value = "{id}/img", headers = "accept=image/png")
     public Mono<ResponseEntity<DataBuffer>> getImgPergunta(@PathVariable("id") Long perguntaId,
-                                                           @RequestParam(value = "rndSeed", required = false, defaultValue = "12")
+                                                           @RequestParam(value = "rndSeed", required = false)
                                                            Long optRndSeed) {
 
         return perguntaService.getPerguntaCompleta(perguntaId, optRndSeed)

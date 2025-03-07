@@ -20,7 +20,10 @@ public interface TesteRepository extends ReactiveCrudRepository<Teste, Long> {
            "  AND T.nota IS NOT NULL " +
            "  AND T.data_conclusao IS NOT NULL " +
            "  AND T.nota > 4 " +
-           "  AND DATE_ADD(T.data_conclusao, INTERVAL (6*T.nota) MINUTE) > :dataValidade " +
+           "  AND DATE_ADD(T.data_conclusao, INTERVAL (15*T.nota) MINUTE) > :dataValidade " +
            "  AND MIP.maquina_id = :maquinaId")
     Flux<Teste> findCorrigidosByMaquinaAndValidade(Long maquinaId, LocalDateTime dataValidade);
+
+    @Query("SELECT RAND(MAX(T.id)) FROM teste T")
+    Mono<Integer> initializeRand();
 }

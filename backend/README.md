@@ -16,6 +16,11 @@ Responda corretamente às questões para ganhar cotas de acesso à internet.
     #!/bin/bash
     java -Dlogging.level.br.nom.figueiredo.sergio.cogito=TRACE -jar cogito-0.0.1-SNAPSHOT.jar
 
+No Raspberry PI, o `\includegraphics` não funcionará porque a aplicação
+roda no modo servidor e não tem display (`java.awt.headless=true`). A 
+implementação do `\includegraphics` usa o java.awt.Label que exige um 
+SO com display (`java.awt.headless=false`).
+
 ## Páginas:
 
 - [Realização do Teste](http://teste/)

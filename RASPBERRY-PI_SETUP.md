@@ -441,3 +441,20 @@ Exemplo filtro tcpdump para ver os pacotes de rede no Raspberry PI 5
 de um determinado IP.
 
     $ sudo tcpdump -i wan0 src host 192.168.2.10 or dst host 192.168.2.10
+
+## Problema no /includegraphics do LaTeX ? java.awt.HeadlessException ?
+
+ref.: [Possible to run java UI (AWT/Swing) application on Raspberry pi 2 ...](https://raspberrypi.stackexchange.com/a/49435/77721) 
+
+No raspberry pi, é preciso instalar/atualizar os seguinte pacotes.
+(Não funcionou para resolver o problema do headless mode)
+
+```
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install openssl
+sudo apt-get install xterm
+sudo apt-get install xauth
+sudo apt-get install libxtst6
+sudo reboot
+```

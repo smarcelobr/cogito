@@ -68,7 +68,8 @@ public class TesteServiceImpl implements TesteService {
     @Transactional
     @Override
     public Mono<Teste> criarTeste(String ip) {
-        return this.perguntaService.getRandom(ip, 5)
+        return  this.testeRepository.initializeRand().then(
+                this.perguntaService.getRandom(ip, 5)
                 .map(this::criaQuestao)
                 .collectList()
                 .map(questoes -> {
@@ -79,7 +80,7 @@ public class TesteServiceImpl implements TesteService {
                     teste.setIp(ip);
                     return teste;
                 })
-                .flatMap(this::salvarTesteCompleto);
+                .flatMap(this::salvarTesteCompleto));
     }
 
     @Transactional
