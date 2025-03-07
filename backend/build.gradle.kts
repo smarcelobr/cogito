@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "br.nom.figueiredo.sergio"
-version = "0.0.2-SNAPSHOT"
+version = "0.0.2"
 
 java {
 	toolchain {
